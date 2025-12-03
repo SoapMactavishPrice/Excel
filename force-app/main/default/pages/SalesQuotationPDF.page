@@ -1,0 +1,133 @@
+<apex:page renderAs="pdf" contentType="application/pdf" standardController="Quote" extensions="QuotePdfController">
+    <!-- HEADER -->
+    <table style="width:100%; font-size:11px; border: none;">
+        <tr>
+            <td style="width:50%; border:none;">
+                <apex:image url="{!URLFOR($Resource.Company_Logo)}" width="110" height="80"/>
+            </td>
+            <td style="width:50%; text-align:right; border:none;">
+                <strong style="font-size:23px; color:#2c3e50;">Excel Industries Limited</strong><br/>
+                <span style="font-size:13px; color:#555;">184-87, S.V. Road, Next to 24Carat Multiplex<br/>
+                    Jogeshwari (W), Mumbai - 400102<br/>
+                    Mob: 7095635304</span>
+            </td>
+        </tr>
+    </table>
+    
+    <!-- TITLE -->
+    <div style="text-align:center; font-size:18px; font-weight:bold; margin-top:20px; margin-bottom:15px; letter-spacing:1px;">
+        SALES QUOTATION
+    </div>
+    
+    <!-- QUOTATION INFO -->
+    <table style="width:100%; font-size:14px; font-family:Arial, sans-serif; border:none; margin-bottom:10px;">
+        <tr>
+            <td style="border:none; padding:4px 0;"><strong>Quotation No.:</strong> {!quote.QuoteNumber}</td>
+            <td style="border:none; padding:4px 0; text-align:right;"><strong>Date:</strong> {!formattedDate}</td>
+            
+        </tr>
+    </table>
+    
+    <!-- INTRO PARAGRAPH -->
+    <p style="font-size:14px; font-family:Arial, sans-serif; margin:10px 0;">
+        Further to our discussion, please find the quotation below:
+    </p><br/>
+    
+    <!-- DETAILS -->
+    <table style="width:100%; border-collapse:collapse; font-size:13px; font-family:Arial, sans-serif;">
+        <tr>
+            <td style="border:1px solid black; vertical-align:top; width:40%; padding:10px;" rowspan="8">
+                <b>To:</b> {!quote.Name}<br/> <br/>               
+                {!quote.Bill_To__r.Name}<br/>
+                <!--{!quote.Bill_To__r.Postal_Code__r.Name} -->
+                {!quote.Bill_To__r.Address_1__c}, 
+                {!quote.Bill_To__r.City__r.Name}, {!quote.Bill_To__r.State__r.Name},{!quote.Bill_To__r.Country__r.Name} <br/>
+                
+            </td>
+            <td style="border:1px solid black; font-weight:bold; padding:5px; width:30%;">Packaging</td>
+            <td style="border:1px solid black; padding:5px; width:30%;">{!packagingTypesString}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Offer Validity</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.Offer_Validity__c}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">INCO Terms</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.INCO_Terms__c}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Carrier</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.Carriers__c}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Destination</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.BillingName}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Transport</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.Transport__c}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Payment Terms</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.Payment_Method__c}</td>
+        </tr>
+        <tr>
+            <td style="border:1px solid black; font-weight:bold; padding:5px;">Shipment</td>
+            <td style="border:1px solid black; padding:5px;">{!quote.ShippingName}</td>
+        </tr>
+    </table> <br/>
+    
+    <!-- PRODUCT TABLE -->
+    <table style="width:100%; font-size:12px; font-family:Arial, sans-serif; border-collapse:collapse; margin-top:10px; border:1px solid black;">
+        <!-- Header -->
+        <tr style="font-weight:bold; background-color:#f2f2f2; text-align:center;">
+            <th rowspan="2" style="border:1px solid black; padding:6px;">S. No.</th>
+            <th rowspan="2" style="border:1px solid black; padding:6px;">Product</th>
+            <th rowspan="2" style="border:1px solid black; padding:6px;">Price</th>
+            <th rowspan="2" style="border:1px solid black; padding:6px;">Quantity</th>
+            <th rowspan="2" style="border:1px solid black; padding:6px;">Unit</th>
+            <th colspan="3" style="border:1px solid black; padding:6px;">Taxes</th>
+            <th rowspan="2" style="border:1px solid black; padding:6px;">Sub Total</th>
+        </tr>
+        <tr style="font-weight:bold; background-color:#f2f2f2; text-align:center;">
+            <th style="border:1px solid black; padding:6px;">CGST<br/>(9%)</th>
+            <th style="border:1px solid black; padding:6px;">SGST<br/>(9%)</th>
+            <th style="border:1px solid black; padding:6px;">IGST<br/>(18%)</th>
+        </tr>
+        
+        <!-- Data Rows -->
+        <apex:repeat value="{!lineItems}" var="item">
+            <tr>
+                <td style="border:1px solid black; padding:6px; text-align:center;">{!item.serialNo}</td>
+                <td style="border:1px solid black; padding:6px;">{!item.productName}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.price}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.quantity}</td>
+                <td style="border:1px solid black; padding:6px;">{!item.unit}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.cgst}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.sgst}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.igst}</td>
+                <td style="border:1px solid black; padding:6px; text-align:right;">{!item.Subtotal}</td>
+            </tr>
+        </apex:repeat>
+        
+        <!-- Totals -->
+        <tr>
+            <td colspan="8" style="text-align:right; border:1px solid black; padding:6px; font-weight:bold;">Total Taxes</td>
+            <td style="border:1px solid black; padding:6px; text-align:right;"></td>
+        </tr>
+        <tr>
+            <td colspan="8" style="text-align:right; border:1px solid black; padding:6px; font-weight:bold;">Grand Total</td>
+            <td style="border:1px solid black; padding:6px; text-align:right;">{!quote.grandTotal}</td>
+        </tr>
+    </table>
+    
+    
+    <!-- FOOTER -->
+    <p style="font-size:14px; margin-top:20px;">
+        Thanks and Best Regards,<br/><br/>
+        {!salespersonName}<br/>
+        Manager<br/>
+        Excel Industries Ltd
+    </p>
+    
+</apex:page>

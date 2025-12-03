@@ -1,0 +1,134 @@
+<template>
+    <lightning-card>
+       
+</lightning-card>
+        <div class="card-data">
+             <div if:true={showSpinner}>
+            <lightning-spinner variant="brand" alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+        <lightning-record-edit-form object-api-name="Production__c" class="detailFix">
+            <lightning-layout multiple-rows>
+
+                <lightning-layout-item size="5" class="slds-p-horizontal_x-small" small-device-size="2"
+                    medium-device-size="2" large-device-size="5">
+                    <div style="display:flex">
+                        <label>Fiscal Year :&nbsp;</label>
+                        <lightning-input-field field-name="Fiscal_Year__c" variant="label-hidden" style="width:30%" disabled
+                            onchange={onFilterInputChange} value={fiscId}>
+                        </lightning-input-field>
+                    </div>
+                </lightning-layout-item>
+
+
+                <lightning-layout-item size="3" class="slds-p-horizontal_x-small" small-device-size="2"
+                    medium-device-size="2" large-device-size="3">
+                    <div style="display:flex">
+                        <label>Search :&nbsp;</label>
+                        <lightning-input label="Search" style="width:80%" onchange={handleSearch} variant="label-hidden"
+                            placeholder="Search..."></lightning-input>
+                    </div>
+                </lightning-layout-item>
+
+
+
+            </lightning-layout>
+        </lightning-record-edit-form>
+
+        <div class="slds-m-top_small scrollwrappper1 targetdatatable" style="max-height:30rem">
+            <div class="scrollwrappper2">
+                <table class="slds-table slds-table_bordered monthlytable" style="overflow: scroll; margin-top: 52px;">
+                    <thead class="tablcls">
+                        <tr class="slds-text-title_caps" style="">
+                            <!-- Product Category -->
+                            <th scope="col" style="width: 15%; min-width: 150px;background: #cecfd4;">
+                                <div>Product Category</div>
+                            </th>
+                        
+                            <th scope="col" style="width: 10%; min-width: 120px;background: #cecfd4;">
+                                <div class="commonLeftForSecondcol"></div>
+                            </th>
+                        
+                            <!-- Months Headers -->
+                            <template for:each={monthList} for:item="item">
+                                <th scope="col" key={item} style="width: 7%; min-width: 80px;background: #cecfd4;">
+                                    <div class="slds-truncate slds-p-around_xx-small">{item}</div>
+                                </th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={displayedData} for:item="item">
+                            <tr key={item.Id}>
+                                <!-- Product Name -->
+                                <td style="vertical-align: top; width: 15%; min-width: 150px;border: 1px solid;">
+                                    <label class="slds-p-around_xx-small">{item.ParameterName}</label>
+                                </td>
+                        
+                                <td style="vertical-align: top; width: 10%; min-width: 120px;border: 1px solid;">
+                                    <div style="display: flex; flex-direction: column; line-height: 25px;">
+                                        <lightning-formatted-text class="slds-form-element__label slds-col" style="font-size: 14px; margin-bottom: 10px;" value="Opening Stock"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col" style="font-size: 14px; margin-bottom: 10px;" value="Production"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col slds-text-title_bold" style="font-size: 14px; margin-bottom: 10px;" value="Total Stock"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col" style="font-size: 14px; margin-bottom: 10px;" value="Domestic Sales"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col" style="font-size: 14px; margin-bottom: 10px;" value="Export Sales"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col" style="font-size: 14px; margin-bottom: 10px;" value="CC"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col slds-text-title_bold" style="font-size: 14px; margin-bottom: 10px;" value="Total Sales"></lightning-formatted-text>
+                                        <lightning-formatted-text class="slds-form-element__label slds-col slds-text-title_bold" style="font-size: 14px; margin-bottom: 10px;" value="Closing Stock"></lightning-formatted-text>
+                                    </div>
+                                </td>
+                        
+                                <!-- Child Data (Columns for each month) -->
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.pId} class={childItem.className} style="width: 7%; min-width: 80px;border: 1px solid;">
+                                        <div class="slds-truncate slds-p-around_xxx-small" style="display: flex; flex-direction: column;">
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Opening_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Opening_Stock} type="number" variant="label-hidden" onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Opening_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Opening_Stock} type="number" variant="label-hidden" onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="production_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.production_Stock} type="number" variant="label-hidden" onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_production_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_production_Stock} type="number" variant="label-hidden" onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Total_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Total_Stock} type="number" variant="label-hidden" disabled onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Total_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Total_Stock} type="number" variant="label-hidden" disabled onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Domestic_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Domestic_Sales} type="number" variant="label-hidden" onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Domestic_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Domestic_Sales} type="number" variant="label-hidden" onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Export_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Export_Sales} type="number" variant="label-hidden" onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Export_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Export_Sales} type="number" variant="label-hidden" onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="CC_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.CC_Sales} type="number" variant="label-hidden" onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_CC_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_CC_Sales} type="number" variant="label-hidden" onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Total_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Total_Sales} type="number" variant="label-hidden" disabled onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Total_Sales" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Total_Sales} type="number" variant="label-hidden" disabled onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+        
+                                            <lightning-input if:false={childItem.isCurrentMonth} data-label="Closing_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Closing_Stock} type="number" variant="label-hidden" disabled onchange={onDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                            <lightning-input if:true={childItem.isCurrentMonth} data-label="Actual_Closing_Stock" data-parent={item.ParameterId} data-id={childItem.pId} value={childItem.Actual_Closing_Stock} type="number" variant="label-hidden" disabled onchange={ActualonDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                        </div>
+                                    </td>
+                                </template>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+
+
+
+        <div class="slds-p-around_medium slds-text-align_center">
+            <lightning-button onclick={changePage} disabled={isFirstPage} label="Previous" data-page="prev">
+            </lightning-button>
+            <span class="slds-p-horizontal_small">Page {currentPage} of {totalPages}</span>
+            <lightning-button onclick={changePage} disabled={isLastPage} label="Next" data-page="next">
+            </lightning-button>
+
+            <lightning-button onclick={SaveData} label="Save" variant="brand"></lightning-button>
+
+        </div>
+        </div>
+
+   
+
+</template>

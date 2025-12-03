@@ -1,0 +1,9 @@
+.headerCls{
+    font-size: 20px;
+    margin-top: -14px;
+    border-bottom: 1px solid;
+
+}
+.lightning-quick-action-panel {
+    max-height: 500px !important;
+}

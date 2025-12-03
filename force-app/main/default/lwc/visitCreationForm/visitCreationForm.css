@@ -1,0 +1,91 @@
+.custom-textarea {
+    width: 90%;
+    height: 120px; /* ~5 lines */
+    resize: vertical; /* Optional */
+    padding: 0.5rem;
+    font-size: 0.875rem;
+}
+
+
+@media (max-width: 767px) {
+    .width_100_percent {
+        width: 100%;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .width_7_percent {
+        width:7%;
+    }
+
+    .width_8_percent {
+        width:8%;
+    }
+
+    .width_9_percent {
+        width:9%;
+    }
+    
+    .width_10_percent {
+        width:10%;
+    }
+
+    .width_11_percent {
+        width:11%;
+    }
+
+    .width_12_percent {
+        width:12%;
+    }
+
+    .width_13_percent {
+        width:13%;
+    }
+
+    .width_14_percent {
+        width:14%;
+    }
+
+    .width_15_percent {
+        width: 15%;
+    }
+}
+
+
+@media (min-width: 1025px) {
+    .width_7_percent {
+        width:7%;
+    }
+
+    .width_8_percent {
+        width:8%;
+    }
+
+    .width_9_percent {
+        width:9%;
+    }
+    
+    .width_10_percent {
+        width:10%;
+    }
+
+    .width_11_percent {
+        width:11%;
+    }
+
+    .width_12_percent {
+        width:12%;
+    }
+
+    .width_13_percent {
+        width:13%;
+    }
+
+    .width_14_percent {
+        width:14%;
+    }
+
+    .width_15_percent {
+        width: 15%;
+    }
+}

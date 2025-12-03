@@ -1,0 +1,129 @@
+<template>
+    
+    <lightning-quick-action-panel header="New Product Interested .....abcd">
+
+    <template if:true={showSpinner}>
+        <lightning-spinner alternative-text="Loading" size="small"></lightning-spinner>
+    </template>
+     
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="6">
+                <div style="display:flex"><strong>Family&nbsp;:&nbsp;</strong>
+                <template if:true={options}>
+                    <lightning-combobox 
+                        label="Product Family"
+                        value={selectedValue}
+                        variant="label-hidden"
+                        options={options}
+                        onchange={handleValueChange}>
+                    </lightning-combobox>
+                    
+                </template>
+            </div>
+        
+            </lightning-layout-item>
+            <lightning-layout-item size="6">
+                <div style="display:flex;" class="slds-align_absolute-center"><strong>Search&nbsp;:&nbsp;</strong>
+                    <lightning-input variant="label-hidden" placeholder="Search by Name, Product Code" onchange={handleSearch} style="width:80%"></lightning-input>
+
+                    </div>
+                
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <table style="width: 98%;"
+                        class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right ">
+                        <thead>
+                            <tr>
+                            <th class="" scope="col"
+                                style="background-color: #063190; color: #fff;width: 1%;">
+                                Select
+                            </th>
+                            <th class="" scope="col"
+                                style="background-color: #063190; color: #fff;width: 20%;">
+                                Product Name
+                            </th>
+                                <th class="" scope="col" style="background-color:#063190; color: #fff;width: 20%">
+                                    <div class="text-align:center;slds-truncate" title="Case Number">Product Code</div>
+                                </th>
+                                
+                                <th class="" scope="col" style="background-color:#063190; color: #fff;width: 20%">
+                                    <div class="text-align:center;slds-truncate" title="Case Number">Volume in Kgs
+                                    </div>
+                                </th>
+
+                                <th class="" scope="col" style="background-color: #063190; color: #fff;width: 20%">
+                                    <div class="text-align:center;slds-truncate" title="Case Number">Expected Price</div>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={ShowTableData} for:index="index" for:item="item">
+                                <tr key={item.Id}>
+                                    <td><lightning-input variant="label-hidden" type="checkbox" data-id={item.Id} checked={item.select} onchange={handleSelect}></lightning-input></td>
+                                    <td>{item.Name}</td>
+                                    <td>{item.ProductCode}</td>
+                                    <td><lightning-input if:true={item.select} type="Number" variant="label-hidden" data-id={item.Id} value={item.volume} data-label="volume" onchange={handlePriceChange}></lightning-input></td>
+                                    <td><lightning-input if:true={item.select} type="Number" variant="label-hidden" data-id={item.Id} value={item.price} data-label="price" onchange={handlePriceChange}></lightning-input></td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" style="display:flex">
+                <lightning-button disabled={bDisableFirst} icon-name="utility:jump_to_left"
+                                    label="First" class="slds-p-horizontal_x-small" alternative-text="first page"
+                                    onclick={firstPage}></lightning-button>
+                                <lightning-button disabled={bDisableFirst} icon-name="utility:chevronleft"
+                                    label="Previous" alternative-text="Previous"
+                                    onclick={previousHandler}></lightning-button>
+                                &nbsp;
+                                <span class="slds-badge slds-badge_lightest"
+                                    style="margin-right: 10px;margin-left: 10px;">
+                                    Page {page} of {totalPage} | Total: {totalRecountCount}
+                                </span>
+                                &nbsp;
+                                <lightning-button disabled={bDisableLast} icon-name="utility:chevronright" label="Next"
+                                    alternative-text="Next" onclick={nextHandler} class="slds-p-horizontal_x-small"
+                                    icon-position="right"></lightning-button>
+                                <lightning-button disabled={bDisableLast} icon-name="utility:jump_to_right" label="Last"
+                                    alternative-text="last page" onclick={lastPage}
+                                    icon-position="right"></lightning-button>
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button variant="brand" label="Save" class="slds-m-left_x-small" onclick={save}></lightning-button>
+            </div>
+        </div>
+    </lightning-quick-action-panel>
+
+    <!-- <lightning-card>
+        <div class="slds-text-align_center">
+            <h1 class="headerCls">New Product Intersted..</h1>
+        </div>
+
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="4">
+                <div style="display:flex"><strong>Family&nbsp;:&nbsp;</strong>
+                <template if:true={options}>
+                    <lightning-combobox 
+                        label="Product Family"
+                        value={selectedValue}
+                        variant="label-hidden"
+                        options={options}
+                        onchange={handleValueChange}>
+                    </lightning-combobox>
+                    
+                </template>
+            </div>
+        
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" style="display:flex">
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button variant="brand" label="Save" class="slds-m-left_x-small" onclick={save}></lightning-button>
+            </div>
+        </div>
+    </lightning-card> -->
+</template>

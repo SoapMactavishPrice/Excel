@@ -1,0 +1,108 @@
+<template>
+    <!-- <lightning-quick-action-panel header="New Decision Criteria Master"> -->
+<lightning-card>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12">
+                <div style="display:flex">
+                    <lightning-icon icon-name="standard:account" alternative-text="Account"
+                        title="Account"></lightning-icon>
+                    <label style="font-size: 16px;"
+                        class="slds-m-left_small slds-m-top_xx-small slds-text-heading_large slds-text-title_bold">
+                        New Decision Criteria Master</label>
+                </div>
+            </lightning-layout-item>
+            </lightning-layout>
+        
+        <lightning-layout multiple-rows class="slds-m-around_xx-small">
+            <!-- <lightning-layout-item class="slds-m-horizontal_x-small" size="1">
+                <strong></strong>
+            </lightning-layout-item>  -->
+            <lightning-layout-item size="1">
+                <label class="slds-m-horizontal_xx-small"><strong>Sequence</strong></label>
+            </lightning-layout-item>
+            <lightning-layout-item  size="4">
+                <label class="slds-m-horizontal_xx-small"><strong>Question</strong></label>
+            </lightning-layout-item>
+            <lightning-layout-item size="2">
+                <label class="slds-m-horizontal_xx-small"><strong>Decision</strong></label>
+            </lightning-layout-item>
+            <lightning-layout-item  size="2">
+                <label class="slds-m-horizontal_xx-small"><strong>Decision Role</strong></label>
+            </lightning-layout-item>
+            <lightning-layout-item  size="2">
+                <label class="slds-m-horizontal_xx-small"><strong>Decision User</strong></label>
+            </lightning-layout-item>
+            <lightning-layout-item size="1">
+                <label class="slds-m-horizontal_xx-small"><strong>Action</strong></label>
+
+            </lightning-layout-item>
+
+
+            <template for:each={addAnswer} for:item="answer">
+
+
+                <lightning-layout-item  key={answer.index} size="1">
+                    <!-- Input fields for Assessment Score and Answer -->
+                    <lightning-input variant="label-hidden" class="slds-m-horizontal_xx-small" data-label="Assessment_Score" data-index={answer.index}
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item  key={answer.index} size="4">
+                    <lightning-input variant="label-hidden" class="slds-m-horizontal_xx-small" data-label="Question" data-index={answer.index}
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+
+                <lightning-layout-item key={answer.index} size="2">
+                    <lightning-combobox class="slds-m-horizontal_xx-small" value={answer.Decision__c} variant="label-hidden" data-index={answer.index}
+                        data-label="Decision__c" onchange={handleScoreChange} options={questionTypeOptions}>
+                    </lightning-combobox>
+                </lightning-layout-item>
+
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form  object-api-name="Decision_Criteria__c">
+                        <lightning-input-field  class="" field-name="Decision_Role__c" onchange={handleScoreChange}
+                            data-index={answer.index} data-label="decRole" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>    
+
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form object-api-name="Decision_Criteria__c">
+                        <lightning-input-field class="" field-name="Decision_User__c" onchange={handleScoreChange}
+                            data-index={answer.index} data-label="decUser" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>    
+
+
+                <lightning-layout-item key={answer.index} size="1">
+                    <div style="display:flex" class="">
+                        <lightning-button-icon icon-name="utility:add" alternative-text="Remove" title="Remove Answer"
+                            onclick={addAnswerItem} data-index={answer.index}>
+                        </lightning-button-icon>
+                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                            title="Remove Answer" onclick={removeAnswer} data-index={answer.index}
+                            class="slds-m-left_x-small">
+                        </lightning-button-icon>
+                    </div>
+                </lightning-layout-item>
+
+
+            </template>
+
+        </lightning-layout>
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" style="display:flex">
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button variant="brand" label="Save" class="slds-m-left_x-small"
+                    onclick={save}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+
+    <!-- </lightning-quick-action-panel> -->
+</template>

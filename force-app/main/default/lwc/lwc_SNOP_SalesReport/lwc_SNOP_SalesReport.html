@@ -1,0 +1,309 @@
+<template>
+     <div if:true={showSpinner}>
+            <lightning-spinner variant="brand" alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+        <lightning-tabset variant="scoped" onselect={handleTabChange} active-tab-value={activeTab}>
+            <lightning-tab label="Sales Report" value="sales" style="padding: 3px;">
+                <lightning-button label="Save" onclick={saveFile} variant="brand" value="sales" class="slds-m-around_medium slds-float_right"></lightning-button>
+                <lightning-button label="Download XLS" onclick={downloadTableAsXls} value="sales" variant="brand" class="slds-m-around_medium slds-float_right"></lightning-button>
+
+                <table class="slds-table slds-table_bordered monthlytable">
+                    <thead class="tablcls centerAlign">
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell" colspan="16">
+                                <div>{currentMonthName}</div>
+                            </th>
+                        </tr>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell">
+                                <div></div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="5">
+                                <div class="commonLeftForSecondcol">Sale Qty MT</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="5">
+                                <div class="commonLeftForSecondcol">Rate</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="5">
+                                <div class="commonLeftForSecondcol">Value In Cr</div>
+                            </th>
+                        </tr>
+                        <!-- Header Row 3: Product Category & Month List -->
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell">
+                                <div>Product Category</div>
+                            </th>
+                            <template for:each={monthList} for:item="item">
+                                <th scope="col" key={item} class="header-cell">
+                                    <div class="slds-truncate slds-p-around_xx-small">{item}</div>
+                                </th>
+                            </template>
+                            <template for:each={monthList} for:item="item">
+                                <th scope="col" key={item} class="header-cell">
+                                    <div class="slds-truncate slds-p-around_xx-small">{item}</div>
+                                </th>
+                            </template>
+                            <template for:each={monthList} for:item="item">
+                                <th scope="col" key={item} class="header-cell">
+                                    <div class="slds-truncate slds-p-around_xx-small">{item}</div>
+                                </th>
+                            </template>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={loadAllData} for:item="load">
+                            <tr key={load.ParameterId}><td class="body-cell" colspan="17"><strong>{load.ParameterPGName}</strong></td></tr>
+                            <template for:each={load.lineData} for:item="item">
+                            <tr key={item.Id}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small">{item.ParameterName}</label>
+                                </td>
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.ParameterId} class="body-cell">
+                                        <label if:true={childItem.Actual_Domestic_Sales}>{childItem.Actual_Domestic_Sales}</label>
+                                        <label if:true={childItem.Domestic_Sales} class="slds-p-around_xx-small">{childItem.Domestic_Sales}</label>
+                                    </td>
+                                </template>
+            
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.ParameterId} class="body-cell">
+                                        <lightning-input if:true={childItem.Actual_Domestic_Sales}
+                                            data-label="rate" data-parent={item.Id} data-val="Actual_Domestic_Sales"
+                                            data-id={childItem.ParameterId} value={childItem.rate} data-index={childItem.index}
+                                            type="number" variant="label-hidden" onchange={handleDataInput} data-pgroup={item.ParameterPGId}
+                                            style="margin-bottom: 5px;"></lightning-input>
+                                        <lightning-input if:true={childItem.Domestic_Sales} data-label="rate" data-val="Domestic_Sales"
+                                            data-parent={item.Id} data-id={childItem.ParameterId} data-index={childItem.index} data-pgroup={item.ParameterPGId}
+                                            value={childItem.rate} type="number" variant="label-hidden"
+                                            onchange={handleDataInput} style="margin-bottom: 5px;"></lightning-input>
+                                    </td>
+                                </template>
+            
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.ParameterId} class="body-cell">
+                                        <label if:true={childItem.Actual_Domestic_Sales}>{childItem.salesValue}</label>
+                                        <label if:true={childItem.Domestic_Sales} class="slds-p-around_xx-small">{childItem.salesValue}</label>
+                                    </td>
+                                </template>
+                            </tr>
+                            </template>
+                            
+                        </template>
+
+                        <template for:each={MonthTotal} for:item="item">
+                            <tr key={item.label}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>{item.label}</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <template for:each={item.totalMonthViseValue} for:item="month">
+                                    <td key={month.index} class="body-cell">
+                                            <label class="slds-p-around_xx-small">
+                                                <strong>{month.total}</strong>
+                                            </label>
+                                    </td>
+                                </template>
+                                </tr>
+                        </template>
+
+                       
+                            <tr>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>GRAND TOTAL</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <template for:each={monthlySales} for:item="month">
+                                    <td key={month.name} class="body-cell">
+                                            <label class="slds-p-around_xx-small">
+                                                <strong>{month.total}</strong>
+                                            </label>
+                                    </td>
+                                </template>
+                            </tr>
+                      
+                            <tr>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>INCOMING ROLL OVER</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <lightning-input 
+                                            
+                                            value={IncommingRollOver} type="number" variant="label-hidden"
+                                            onchange={handleIncomingReversal} style="margin-bottom: 5px;"></lightning-input>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                              
+                            </tr>
+                      
+
+                            <tr>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>OUTGOING REVERSAL</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <lightning-input 
+                                            
+                                            value={OutgoingRollOver} type="number" variant="label-hidden"
+                                            onchange={handleOutgoingReversal} style="margin-bottom: 5px;"></lightning-input>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+
+                                <td class="body-cell" colspan="1">
+                                    <label class="slds-p-around_xx-small">-</label>
+                                </td>
+                              
+                            </tr>
+
+                            <tr>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>Actual Dispatch</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <template for:each={monthlySales} for:item="month">
+                                    <td key={month.name} class="body-cell" >
+                                            <label class="slds-p-around_xx-small" if:true={month.Actual_Dispatch}>
+                                                <strong>{month.Actual_Dispatch}</strong>
+                                            </label>
+
+                                            <label class="slds-p-around_xx-small" if:false={month.Actual_Dispatch}>
+                                                <strong>{month.total}</strong>
+                                            </label>
+                                           
+                                    </td>
+                                </template>
+                            </tr>
+                    </tbody>
+                </table>
+                
+
+            </lightning-tab>
+            <lightning-tab label="Production Report" value="production" style="padding: 3px;">
+                <lightning-button label="Download XLS" onclick={downloadTableAsXls} variant="brand" value="production" class="slds-m-around_medium slds-float_right"></lightning-button>
+
+                <table class="slds-table slds-table_bordered monthlytable">
+                    <thead class="tablcls centerAlign">
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell" colspan="16">
+                                <div>{currentMonth_production}</div>
+                            </th>
+                        </tr>
+                        <tr class="slds-text-title_caps">
+                            
+                            <th scope="col" class="header-cell" colspan="6">
+                                <div class="commonLeftForSecondcol">Production Qty MT</div>
+                            </th>
+                           
+                        </tr>
+                        <!-- Header Row 3: Product Category & Month List -->
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell">
+                                <div>Product Category</div>
+                            </th>
+                            <template for:each={monthList} for:item="item">
+                                <th scope="col" key={item} class="header-cell">
+                                    <div class="slds-truncate slds-p-around_xx-small">{item}</div>
+                                </th>
+                            </template>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <template for:each={loadAllData} for:item="load">
+                            <tr key={load.ParameterId}><td class="body-cell" colspan="17"><strong>{load.ParameterPGName}</strong></td></tr>
+                            <template for:each={load.lineData} for:item="item">
+                            <tr key={item.Id}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small">{item.ParameterName}</label>
+                                </td>
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.ParameterId} class="body-cell">
+                                        <label if:true={childItem.Actual_Production}>{childItem.Actual_Production}</label>
+                                        <label class="slds-p-around_xx-small">{childItem.Production}</label>
+                                    </td>
+                                </template>
+                                </tr>
+                                </template>
+                                </template>
+
+                        <!-- <template for:each={loadAllData} for:item="item">
+                            <tr key={item.ParameterId}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small">{item.ParameterName}</label>
+                                </td>
+                                <template for:each={item.childData} for:item="childItem">
+                                    <td key={childItem.ParameterId} class="body-cell">
+                                        <label if:true={childItem.Actual_Production}>{childItem.Actual_Production}</label>
+                                        <label class="slds-p-around_xx-small">{childItem.Production}</label>
+                                    </td>
+                                </template>
+                            </tr>
+                            
+                        </template> -->
+
+                        <template for:each={MonthProductionTotal} for:item="item">
+                            <tr key={item.label}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>{item.label}</strong></label>
+                                </td>
+                                
+                                <template for:each={item.totalMonthProdValue} for:item="month">
+                                    <td key={month.index} class="body-cell">
+                                            <label class="slds-p-around_xx-small">
+                                                <strong>{month.total}</strong>
+                                            </label>
+                                    </td>
+                                </template>
+                                </tr>
+                                </template>
+            
+                        <!-- <tr class="slds-text-title_caps">
+                            <td class="body-cell">
+                                <label class="slds-p-around_xx-small"><strong>Total</strong></label>
+                            </td>
+
+                            <template for:each={monthlySales} for:item="month">
+                                <td key={month.index} class="body-cell">
+                                    <label class="slds-p-around_xx-small">
+                                        {month.total}
+                                    </label>
+                                </td>
+                            </template>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </lightning-tab>
+            
+        </lightning-tabset>
+    </template>

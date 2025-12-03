@@ -1,0 +1,102 @@
+<template>
+    <lightning-card>
+        <!-- <lightning-quick-action-panel header="New Product Interested......a"> -->
+        <lightning-layout multiple-rows class="slds-m-around_xx-small">
+
+
+            <lightning-layout-item size="12" class="slds-m-horizontal_xx-small slds-m-vertical_small"
+                large-device-size="12" small-device-size="12">
+                <label class="slds-text-heading_medium slds-text-title_bold " style="font-size:21px">Edit Product
+                    Interested</label></lightning-layout-item>
+            <lightning-layout-item size="1" large-device-size="1" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Name</strong>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="7" large-device-size="7" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Product Name</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="1" large-device-size="1" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Product Code</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="1" large-device-size="1" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Volume in Kgs</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="1" large-device-size="1" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Expected Price</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="1" large-device-size="1" small-device-size="12">
+                <strong class="slds-m-horizontal_xx-small slds-m-vertical_small">Add in
+                    Opty?</strong>
+
+            </lightning-layout-item>
+
+
+            <template for:each={Exist} for:item="answer">
+                <lightning-layout-item class="slds-p-around_medium" key={answer.index} size="1" large-device-size="1"
+                    small-device-size="12" style="padding-left: 0px;">
+                    <!-- <lightning-input variant="label-hidden"   value={answer.Name} disabled
+        data-index={answer.index} onchange={handleScoreChange} ></lightning-input> -->
+                    {answer.Name}
+                </lightning-layout-item>
+
+                <lightning-layout-item key={answer.index} size=" 7" large-device-size="7" small-device-size="12">
+                    <lightning-record-edit-form object-api-name="Product_Interested__c" data-index={answer.index}>
+
+
+                        <!-- Use lightning-input-field to display and edit the 'Name' field -->
+                        <lightning-input-field class="slds-p-around_medium" style="pointer-events: none;
+    background-color: transparent !important;
+    box-shadow: none !important;
+" field-name="Product__c" value={answer.prodId} variant="label-hidden"></lightning-input-field>
+                    </lightning-record-edit-form>
+
+
+                    <!-- <lightning-record-picker
+        object-api-name="Product2"
+        value={answer.prodId}
+        data-index={answer.index}
+        variant="label-hidden">
+        </lightning-record-picker>
+ -->
+
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-p-around_medium slds-text-align_center" key={answer.index} size="1"
+                    large-device-size="1" small-device-size="12">
+                    <!-- <lightning-input variant="label-hidden"   value={answer.prodCode} disabled
+        data-index={answer.index} onchange={handleScoreChange} ></lightning-input> -->
+                    {answer.prodCode}
+                </lightning-layout-item>
+                <lightning-layout-item key={answer.index} size="1" large-device-size="1" small-device-size="12">
+                    <lightning-input class="slds-p-around_medium" variant="label-hidden" data-label="Volume_in_Kgs"
+                        value={answer.Volume_in_Kgs} data-index={answer.index}
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item key={answer.index} size="1" large-device-size="1" small-device-size="12">
+                    <lightning-input class="slds-p-around_medium" variant="label-hidden" data-label="Expected_Price"
+                        value={answer.Expected_Price} data-index={answer.index}
+                        onchange={handleScoreChange}></lightning-input>
+
+                </lightning-layout-item>
+                <lightning-layout-item key={answer.index} size="1" large-device-size="1" small-device-size="12">
+                    <lightning-input variant="label-hidden" type="checkbox" class="slds-p-around_medium"
+                        data-label="Add_In_Opty" value={answer.Add_In_Opty} data-index={answer.index}
+                        onchange={handleSelectChange}></lightning-input>
+                </lightning-layout-item>
+
+
+
+            </template>
+
+        </lightning-layout>
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" style="display:flex">
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button variant="brand" label="Save" class="slds-m-left_xx-small"
+                    onclick={save}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+    <!-- </lightning-quick-action-panel> -->
+
+</template>

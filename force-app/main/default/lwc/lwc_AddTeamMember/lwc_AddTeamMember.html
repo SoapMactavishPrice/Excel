@@ -1,0 +1,90 @@
+<template>
+    <lightning-card>
+        <!-- Title Section -->
+        <lightning-layout class="slds-m-around_small">
+            <lightning-layout-item size="11">
+                <div style="display:flex">
+                    <lightning-icon size="x-small" icon-name="action:user" alternative-text="Approved" title="Approved"></lightning-icon>
+                    <label class="slds-m-left_small slds-m-top_xx-small slds-text-heading_small"><strong>Add Team Member</strong></label>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <!-- Table Header -->
+        <lightning-layout horizontal-align="spread" class="slds-m-around_small">
+            <lightning-layout-item size="1" large-device-size="1">
+                <strong>Sr.No</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="4" large-device-size="4">
+                <strong>User Name</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="4" large-device-size="4">
+                <strong>User Role</strong>
+            </lightning-layout-item>
+            <lightning-layout-item size="3" large-device-size="3">
+                <label class="slds-m-left_small" ><strong>Action</strong></label>
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <!-- Root level lightning-record-edit-form for managing team member data -->
+        <lightning-record-edit-form 
+            object-api-name="Team_Member__c" 
+            >
+            
+            <!-- Loop through team members and create individual edit forms for each -->
+            <template for:each={teamMemberDetail} for:item="user" for:index="index">
+                <lightning-layout horizontal-align="spread" key={user.key} class="slds-m-around_small">
+                    <!-- Display Sr.No -->
+                    <lightning-layout-item size="1" large-device-size="1">
+                        {user.srNo}
+                    </lightning-layout-item>
+
+                    <!-- User Name -->
+                    <lightning-layout-item size="4" large-device-size="4">
+                        <div style="width: 80%;" >
+                    <template if:false={user.name}>
+                        <lightning-input-field field-name="User__c" class="slds-m-right_large" data-index={user.key} onchange={handleUserOnchange} data-label="name" if:false={user.name}  variant="label-hidden" ></lightning-input-field>
+                    </template>
+                    <template if:true={user.name}>
+                        <lightning-input-field field-name="User__c" class="slds-m-right_large" data-index={user.key} onchange={handleUserOnchange} data-label="name" if:true={user.name}   variant="label-hidden" value={user.name}></lightning-input-field>
+                    </template>
+                    </div>
+                    </lightning-layout-item>
+
+                    <!-- User Role -->
+                    <lightning-layout-item size="4" large-device-size="4">
+                        <div style="width: 80%;" >
+                        <lightning-input-field field-name="Team_Member_Role__c" style="width: 80%;" class="slds-m-right_large"  data-index={user.key}  onchange={handleOnchange} data-label="userRole" variant="label-hidden" value={user.userRole}></lightning-input-field>
+                    </div>
+                    </lightning-layout-item>
+
+                    <!-- Remove Action -->
+                    <lightning-layout-item size="3" large-device-size="3">
+                        <div style="display:flex">
+                            <lightning-icon size="x-small" class="slds-m-left_small"  icon-name="action:new" onclick={addTemMember} alternative-text="Approved" title="Approved"></lightning-icon>
+                            <lightning-icon size="x-small" class="slds-m-left_x-small" data-index={user.key}  onclick={remove} data-userid={user.name}  icon-name="action:close" alternative-text="Approved" title="Approved"></lightning-icon>
+
+                        </div>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </template>
+        </lightning-record-edit-form>
+
+        <!-- Action Buttons -->
+        <div class="slds-align_absolute-center slds-m-top_small">
+            <div style="display:flex">
+                <lightning-button 
+                    variant="neutral" 
+                    label="Cancel" 
+                    onclick={handleCancel}>
+                </lightning-button>
+                <lightning-button 
+                    variant="brand" 
+                    label="Save" 
+                    class="slds-m-left_small" 
+                    onclick={handleSave}>
+                </lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

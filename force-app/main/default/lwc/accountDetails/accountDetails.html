@@ -1,0 +1,106 @@
+<template>
+    <lightning-card icon-name="standard:collection" title="Insights">
+        <template if:true={error}>
+            <div class="slds-grid slds-wrap slds-gutters">
+                <div class="slds-col slds-size_1-of-1">
+                    <p class="slds-text-color_error">Error loading data</p>
+                </div>
+            </div>
+        </template>
+        <template if:false={error}>
+            <div class="slds-grid slds-wrap slds-gutters outsight-box">
+                <template if:true={account}>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:endorsement" alternative-text="College Name"
+                                size="small"></lightning-icon>
+                            <h3>Credit Limit</h3>
+                            <p class="insight-value green"><lightning-formatted-number
+                                    value={account.Credit_Limit__c}></lightning-formatted-number></p>
+
+                            <p class="insight-value green"><lightning-formatted-number
+                                    value={Credit_Limit__c}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:opportunity" alternative-text="College Name"
+                                size="small"></lightning-icon>
+                            <h3>Total No of Opportunity</h3>
+                            <p class="insight-value green"><lightning-formatted-number
+                                    value={enquiryCount}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:orders" alternative-text="College Name"
+                                size="small"></lightning-icon>
+                            <h3>Total No of Orders</h3>
+                            <p class="insight-value green"><lightning-formatted-number
+                                    value={salesOrderCount}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:reward" alternative-text="Total Amount"
+                                size="small"></lightning-icon>
+                            <h3>Open Orders</h3>
+                            <p class="insight-value red"><lightning-formatted-number
+                                    value={account.OpenOrderCount}></lightning-formatted-number></p>
+
+                            <p class="insight-value red"><lightning-formatted-number
+                                    value={OpenOrderCount}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:case" alternative-text="Currency"
+                                size="small"></lightning-icon>
+                            <h3>Payment Received</h3>
+                            <p class="insight-value"><lightning-formatted-number
+                                    value={account.Payment_Received__c}></lightning-formatted-number></p>
+
+                            <p class="insight-value red"><lightning-formatted-number
+                                    value={Payment_Received__c}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:date_input" alternative-text="Annual Revenue"
+                                size="small"></lightning-icon>
+                            <h3>Outstanding Invoices</h3>
+                            <p class="insight-value"><lightning-formatted-number
+                                    value={account.Outstanding_Invoices__c}></lightning-formatted-number></p>
+
+                            <p class="insight-value"><lightning-formatted-number
+                                    value={Outstanding_Invoices__c}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:task" alternative-text="Annual Revenue"
+                                size="small"></lightning-icon>
+                            <h3>Total Activity This Month</h3>
+                            <p class="insight-value"><lightning-formatted-number
+                                    value={count}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-8">
+                        <div class="insight-box">
+                            <lightning-icon icon-name="standard:date_time" alternative-text="Annual Revenue"
+                                size="small"></lightning-icon>
+                            <h3>Days Since Last Order</h3>
+                            <p class="insight-value"><lightning-formatted-number
+                                    value={daysSinceLastOrder}></lightning-formatted-number></p>
+                        </div>
+                    </div>
+                </template>
+                <!-- <template if:false={account}>
+                    <div class="slds-col slds-size_1-of-1">
+                        <p>No account data available</p>
+                    </div>
+                </template> -->
+            </div>
+        </template>
+    </lightning-card>
+</template>

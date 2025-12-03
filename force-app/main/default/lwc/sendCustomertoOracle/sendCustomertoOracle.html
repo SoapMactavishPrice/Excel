@@ -1,0 +1,402 @@
+<template>
+	<div if:true={showSpinner} class="exampleHolder">
+		<lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+	</div>
+
+	<template if:true={syncDataResponseFlag}>
+		<div>
+			<div class="showerror slds-p-around_medium" style="font-weight: 500;">
+				<div if:true={ResponseMessage} style="display: flex;align-items: center;">
+					<svg style="height: 50px;width: 40px;margin-right: 10px;" class="slds-icon slds-icon_x-small"
+						focusable="false" data-key="check" aria-hidden="true" height="40px" width="40px" version="1.1"
+						xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+						<circle style="fill:#17a717;" cx="256" cy="256" r="256" />
+						<polygon style="fill:#fff;" points="230.288,365.04 137.456,292.528 157.152,267.312 223.04,318.768 329.984,161.28 
+							356.448,179.248 " />
+					</svg>
+					{ResponseMessage}
+				</div>
+				<div if:true={errorResponseMessage} style="display: flex;align-items: center;">
+					<svg style="height: 50px;width: 40px;margin-right: 10px;" width="40px" height="40px" viewBox="0 0 32 32"
+						version="1.1" xmlns="http://www.w3.org/2000/svg">
+						<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+							<g id="Icon-Set-Filled" sketch:type="MSLayerGroup" transform="translate(-570.000000, -1089.000000)"
+								fill="red">
+								<path
+									d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z"
+									id="cross-circle" sketch:type="MSShapeGroup">
+								</path>
+							</g>
+						</g>
+					</svg>
+					{errorResponseMessage}
+				</div>
+
+			</div>
+		</div>
+	</template>
+
+	<template if:false={syncDataResponseFlag}>
+		<div class="modal-container">
+			<!-- Header -->
+			<div class="modal-header">
+				<h2>Update Account Details</h2>
+				<div class="header-divider"></div>
+			</div>
+
+			<!-- Scrollable Content -->
+			<div class="modal-body">
+				<lightning-record-edit-form object-api-name="Account" record-id={recordId} onsubmit={handleMainSubmit}
+					onsuccess={handleMainSuccess} data-id="mainform">
+					<lightning-messages></lightning-messages>
+					<lightning-layout multiple-rows>
+						<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+							<label class="slds-form-element__label">Name</label>
+							<lightning-input-field field-name="Name" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+							<label class="slds-form-element__label">Customer Code</label>
+							<lightning-input-field field-name="Customer_Code__c" variant="label-hidden"
+								disabled></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+							<label class="slds-form-element__label">Organization</label>
+							<lightning-input-field field-name="Organization__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Gender</label>
+							<lightning-input-field field-name="Gender__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Contact First Name</label>
+							<lightning-input-field field-name="Contact_First_Name__c" variant="label-hidden"
+								value={conFirstName}></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Contact Last Name</label>
+							<lightning-input-field field-name="Contact_Last_Name__c" variant="label-hidden"
+								value={conLastName}></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Phone</label>
+							<lightning-input-field field-name="Phone" variant="label-hidden" value={conMobilePhone}
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Company Email Address</label>
+							<lightning-input-field field-name="Company_Email_Address__c" variant="label-hidden" value={conEmail}
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Country Code</label>
+							<lightning-input-field field-name="Country_Code__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Gen Bus Posting Group</label>
+							<lightning-input-field field-name="Gen_Bus_Posting_Group__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Customer Posting Group</label>
+							<lightning-input-field field-name="Customer_Posting_Group__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Customer Group</label>
+							<lightning-input-field field-name="Customer_Group__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Territory</label>
+							<lightning-input-field field-name="Territory__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">GST Customer Type</label>
+							<lightning-input-field field-name="GST_Customer_Type__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">GSTIN No</label>
+							<lightning-input-field field-name="GSTIN_No__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">PAN Status</label>
+							<lightning-input-field field-name="PAN_Status__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">PAN No</label>
+							<lightning-input-field field-name="PAN_No__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Sales Person Code</label>
+							<lightning-input-field field-name="Sales_Person_Code__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">* Credit Limit</label>
+							<lightning-input-field field-name="Credit_Limit__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Payment Terms</label>
+							<lightning-input-field field-name="Payment_Terms__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Telephone Extension</label>
+							<lightning-input-field field-name="Telephone_Extension__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Telephone Type</label>
+							<lightning-input-field field-name="Telephone_Type__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Telephone Area Code</label>
+							<lightning-input-field field-name="Telephone_Area_Code__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Blocked__c</label>
+							<lightning-input-field field-name="Blocked__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<!-- Row 6 (Add more as needed) -->
+						<!-- <lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Gender</label>
+							<lightning-input-field field-name="Gender__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Contact_Last_Name</label>
+							<lightning-input-field field-name="Contact_Last_Name__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small">
+							<label class="slds-form-element__label">Organization</label>
+							<lightning-input-field field-name="Organization__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item> -->
+
+						<lightning-layout-item size="12"
+							style="padding: 5px 0 5px 15px; display: flex; justify-content: space-between;">
+							<div style="font-size: large; font-weight: 500;">
+								Address Information
+							</div>
+							<div style="padding: 5px 0 5px 0;">
+								<lightning-button label="Add Bill To" data-name="Bill_To" variant="neutral" slot="actions"
+									icon-name="utility:add" onclick={handleInsertAddInfo} class="slds-m-right_small">
+								</lightning-button>
+								<lightning-button label="Add Ship To" data-name="Ship_To" variant="neutral" slot="actions"
+									icon-name="utility:add" onclick={handleInsertAddInfo} class="slds-m-right_small">
+								</lightning-button>
+							</div>
+						</lightning-layout-item>
+						<lightning-layout-item size="12" padding="around-small" style="padding-top: 0px !important;">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered">
+								<thead>
+									<tr class="slds-line-height_reset">
+										<th class="" scope="col" style="background-color: #066afe; color: #fff; width: 20%;">
+											<div class="slds-truncate" title="Name">Name</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff; width: 20%;">
+											<div class="slds-truncate" title="Postal Code">Postal Code</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff; width: 20%;">
+											<div class="slds-truncate" title="Area">Area</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff; width: 20%;">
+											<div class="slds-truncate" title="City">City</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff; width: 20%;">
+											<div class="slds-truncate" title="Primary Address">Primary Address</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Action">Action</div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<template if:true={addressInfoList} for:each={addressInfoList} for:item="ail" for:index="Index">
+										<tr key={ail.Id}>
+											<th scope="col">
+												<div class="slds-truncate" title="Name" style="white-space: break-spaces;">{ail.Name}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Postal Code">{ail.Postal_Code__r.Name}
+												</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Area">{ail.Area__r.Name}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="City">{ail.City__r.Name}</div>
+											</th>
+											<th scope="col">
+												<!-- <div class="slds-truncate" title="Primary Address">{ail.Primary_Address__c}</div> -->
+												<input type="checkbox" checked={ail.Primary_Address__c}
+													style="cursor: default; pointer-events: none;" />
+											</th>
+											<th style="width: 5%; padding-top: 10px;">
+												<lightning-icon icon-name="action:edit" data-index={Index} alternative-text="Success!"
+													variant="success" title="Edit Row" onclick={handleEditRow} style="margin-right: 10px;"
+													size="x-small"></lightning-icon>
+												<lightning-icon icon-name="action:delete" data-index={Index} alternative-text="Delete!"
+													variant="success" title="Delete Row" onclick={handleRemoveRow}
+													size="x-small"></lightning-icon>
+											</th>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</lightning-layout-item>
+
+					</lightning-layout>
+
+					<!-- Footer (Custom Buttons) -->
+					<!-- <div class="slds-m-top_medium slds-align_absolute-center">
+						<lightning-button type="submit" label="Save" variant="brand"></lightning-button>
+						<lightning-button label="Cancel" variant="neutral" class="slds-m-left_small"
+							onclick={handleCancel}></lightning-button>
+					</div> -->
+				</lightning-record-edit-form>
+			</div>
+
+			<!-- Footer -->
+			<div class="modal-footer">
+				<lightning-button variant="brand" label="Save" onclick={handleMainSubmit}></lightning-button>
+				<lightning-button label="Cancel" variant="neutral" class="slds-m-left_small"
+					onclick={closeModal}></lightning-button>
+			</div>
+		</div>
+	</template>
+
+	<!-- For Address -->
+	<template if:true={showAddressInfoModal}>
+		<section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container" style="max-width: 70rem !important;width: 60% !important;">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close"
+						onclick={handleCloseAddressInfoModal}>
+						<lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 class="slds-text-heading_medium">Insert/Update Address</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium">
+					<lightning-record-edit-form object-api-name="Address_Information__c" record-id={addressInfoId} data-id="form1"
+						onsuccess={handleAddInfoOnSuccess} onsubmit={handleAddInfoOnSubmit}>
+						<lightning-layout multiple-rows>
+							<template if:false={isEditing}>
+								<lightning-layout-item size="6" padding="around-small" style="padding-top: 0px !important;">
+									<label class="slds-form-element__label">Name</label>
+									<lightning-input-field field-name="Name" variant="label-hidden" value={addInfoName}
+										disabled></lightning-input-field>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small" style="padding-top: 0px !important;">
+									<label class="slds-form-element__label">RecordTypeId</label>
+									<lightning-input-field field-name="RecordTypeId" variant="label-hidden" value={recordTypeId}
+										disabled></lightning-input-field>
+								</lightning-layout-item>
+							</template>
+							<template if:true={isEditing}>
+								<lightning-layout-item size="6" padding="around-small" style="padding-top: 0px !important;">
+									<label class="slds-form-element__label">Name</label>
+									<lightning-input-field field-name="Name" variant="label-hidden" disabled></lightning-input-field>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small" style="padding-top: 0px !important;">
+									<label class="slds-form-element__label">RecordTypeId</label>
+									<lightning-input-field field-name="RecordTypeId" variant="label-hidden"
+										disabled></lightning-input-field>
+								</lightning-layout-item>
+							</template>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">* Address 1</label>
+								<lightning-input-field field-name="Address_1__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">* Address 2</label>
+								<lightning-input-field field-name="Address_2__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+
+							<template if:true={addFieldsRerenderFlag}>
+								<lightning-layout-item size="6" padding="around-small">
+									<label class="slds-form-element__label">* Postal Code</label>
+									<lightning-record-picker label="Pincode" placeholder="Search Postal Code..." value={pincodevalue}
+										onchange={handlePostCodeChange} object-api-name="Postal_Code__c" data-id="pincode"
+										variant="label-hidden">
+									</lightning-record-picker>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small">
+									<label class="slds-form-element__label">Area</label>
+									<lightning-record-picker label="Area" placeholder="Search Area..." value={areavalue}
+										onchange={handlePostCodeChange} object-api-name="Area__c" data-id="area" variant="label-hidden">
+									</lightning-record-picker>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small">
+									<label class="slds-form-element__label">City</label>
+									<lightning-record-picker label="City" placeholder="Search City..." value={cityvalue}
+										onchange={handlePostCodeChange} object-api-name="City__c" data-id="city" variant="label-hidden">
+									</lightning-record-picker>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small">
+									<label class="slds-form-element__label">State</label>
+									<lightning-record-picker label="State" placeholder="Search State..." value={statevalue}
+										onchange={handlePostCodeChange} object-api-name="State__c" data-id="state" variant="label-hidden">
+									</lightning-record-picker>
+								</lightning-layout-item>
+								<lightning-layout-item size="6" padding="around-small">
+									<label class="slds-form-element__label">Country</label>
+									<lightning-record-picker label="Country" placeholder="Search Country..." value={countryvalue}
+										onchange={handlePostCodeChange} object-api-name="Country__c" data-id="country"
+										variant="label-hidden">
+									</lightning-record-picker>
+								</lightning-layout-item>
+							</template>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">Is Primary Address</label>
+								<lightning-input-field field-name="Primary_Address__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+
+							<!-- <lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">* Postal Codeee</label>
+								<lightning-input-field field-name="Postal_Code__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">Area</label>
+								<lightning-input-field field-name="Area__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">City</label>
+								<lightning-input-field field-name="City__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">State</label>
+								<lightning-input-field field-name="State__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="6" padding="around-small">
+								<label class="slds-form-element__label">Country</label>
+								<lightning-input-field field-name="Country__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+
+							<lightning-layout-item size="6" padding="around-small" style="display: none;">
+								<label class="slds-form-element__label">Account</label>
+								<lightning-input-field field-name="Account__c" variant="label-hidden" value={recordId}
+									disabled></lightning-input-field>
+							</lightning-layout-item>
+
+						</lightning-layout>
+					</lightning-record-edit-form>
+				</div>
+				<footer class="slds-modal__footer">
+					<lightning-button variant="brand" label="Save" onclick={handleAddInfoOnSubmit}></lightning-button>&nbsp;
+					<lightning-button variant="neutral" label="Close" onclick={handleCloseAddressInfoModal}></lightning-button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+
+</template>

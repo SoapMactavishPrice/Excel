@@ -1,0 +1,227 @@
+<template>
+
+    <lightning-card>
+        <template if:true={showSpinner}>
+            <lightning-spinner size="medium"></lightning-spinner>
+        </template>
+        <!-- <lightning-quick-action-panel header="New Product Interested......a"> -->
+        <lightning-layout multiple-rows class="slds-m-around_xx-small">
+
+
+            <lightning-layout-item size="10" class="slds-m-horizontal_xx-small slds-m-vertical_small"
+                large-device-size="10" small-device-size="12">
+                <label class="slds-text-heading_medium slds-text-title_bold " style="font-size:21px">New Sample Booking*
+                </label></lightning-layout-item>
+        </lightning-layout>
+        <div style="">
+            <lightning-record-edit-form object-api-name="Sample_Booking__c">
+                <lightning-layout multiple-rows="true">
+
+                    <lightning-layout-item size="12" large-device-size="3" padding="around-small" if:true={isNew}>
+                        <div class="slds-m-around-small"><label>Customer Name</label>
+                            <lightning-input data-label="New_Customer" value={sampleRequest.New_Customer}
+                                onchange={handleSampleChange} variant="label-hidden"></lightning-input>
+                        </div>
+                    </lightning-layout-item>
+
+                    <!-- <lightning-layout-item size="12" large-device-size="3" padding="around-small">
+                        <div class="slds-m-around-small">
+                            <label>Sample Request Type </label>
+                            <lightning-input-field data-label="Sample_Request_Type" field-name="Sample_Request_Type__c" value={sampleRequest.Sample_Request_Type}
+                                onchange={handleSampleChange} variant="label-hidden"></lightning-input-field>
+                        </div>
+                    </lightning-layout-item> -->
+
+                    <lightning-layout-item size="12" large-device-size="2" padding="around-small" if:true={isExist}>
+                        <div class="slds-m-around-small"><label>Existing Customer</label>
+                            <lightning-input-field data-label="Existing_Customer" field-name="Existing_Customer__c"
+                                onchange={handleSampleChange} variant="label-hidden"></lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" large-device-size="2" padding="around-small">
+                        <div class="slds-m-around-small"><label>Sample Requested Date</label>
+                            <lightning-input-field data-label="Sample_Requested_Date"
+                                field-name="Sample_Requested_Date__c" onchange={handleSampleChange}
+                                variant="label-hidden"></lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" large-device-size="2" padding="around-small">
+                        <div class="slds-m-around-small"><label>
+                                Mode of Transport</label>
+                            <lightning-input-field data-label="Mode_of_Transport" field-name="Mode_of_Transport__c"
+                                onchange={handleSampleChange} variant="label-hidden"></lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+
+
+                    <!-- 2nd row  -->
+
+                    <lightning-layout-item size="12" large-device-size="2" padding="around-small">
+                        <div class="slds-m-around-small"><label>Expected By</label>
+                            <lightning-input-field data-label="Expected_By" field-name="Expected_By__c"
+                                onchange={handleSampleChange} variant="label-hidden"></lightning-input-field>
+                        </div>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="12" large-device-size="3" padding="around-small">
+                        <div class="slds-m-around-small"><label>
+                                Use Lead Address for Sample Dispatch To?</label>
+                            <lightning-input-field data-label="Use_Lead_Address_for_Sample_Dispatch_To"
+                                field-name="Use_Lead_Address_for_Sample_Dispatch_To__c"
+                                checked={sampleRequest.Use_Lead_Address_for_Sample_Dispatch_To}
+                                onchange={handleAddressChange} variant="label-hidden"></lightning-input-field>
+
+                            <!-- {defaultAddress} -->
+                        </div>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+            </lightning-record-edit-form>
+
+
+            <lightning-layout multiple-rows class="slds-m-around_xx-small">
+
+
+                <lightning-layout-item size="10" class="slds-m-horizontal_xx-small slds-m-vertical_small"
+                    large-device-size="12" small-device-size="12">
+                    <label class="slds-text-heading_medium slds-text-title_bold " style="font-size:21px">Add Sample Line
+                        Item</label></lightning-layout-item>
+
+                <lightning-layout-item size="1" large-device-size="1" small-device-size="12"
+                    style="background: #dcdcdc;padding: 6px;">
+                    <label class="slds-m-left_x-small" te><strong>New Product ?</strong></label>
+                </lightning-layout-item>
+
+                <lightning-layout-item class="slds-p-around_small" size="5" large-device-size="5" small-device-size="12"
+                    style="background: #dcdcdc;padding: 6px;">
+                    <strong>Product Name</strong>
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-p-around_small" size="1" large-device-size="1" small-device-size="12"
+                    style="background: #dcdcdc;padding: 6px;">
+                    <strong>Volume in Kgs</strong>
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-p-around_small" size="1" large-device-size="2" small-device-size="12"
+                    style="background: #dcdcdc;padding: 5px;">
+                    <div style="display:flex">
+                        <strong>Address</strong>
+                        <lightning-input variant="label-hidden" type="checkbox" onchange={handleAddressv2Change}
+                            class="slds-m-left_small"></lightning-input>
+                    </div>
+
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-p-around_small" size="1" large-device-size="2" small-device-size="12"
+                    style="background: #dcdcdc;padding: 6px;">
+                    <strong>Remark</strong>
+                </lightning-layout-item>
+                <lightning-layout-item class="slds-p-around_small" size="1" large-device-size="1" small-device-size="12"
+                    style="background: #dcdcdc;padding: 6px;">
+                    <strong>Action</strong>
+                </lightning-layout-item>
+
+
+                <template for:each={addAnswer} for:item="answer">
+
+
+                    <lightning-layout-item class="slds-p-vertical_small" key={answer.index} size="1"
+                        large-device-size="1" small-device-size="12">
+                        <!-- New_Product__c Checkbox -->
+                        <lightning-input type="checkbox" variant="label-hidden" checked={answer.New_Product}
+                            onchange={handleCheckboxChange} data-index={answer.index} class="slds-p-around_medium"
+                            style="margin-top: -15px;">
+                        </lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-p-around_small" key={answer.index} size="5" large-device-size="5"
+                        small-device-size="12">
+
+                        <template if:true={answer.New_Product}>
+                            <lightning-layout horizontal-align="spread" style="margin-top: -16px;margin-left: -15px">
+                                <lightning-layout-item size="12" large-device-size="12" small-device-size="12">
+                                    <lightning-input type="text" variant="label-hidden" value={answer.New_Product_Name}
+                                        onchange={handleTextInputChange} data-index={answer.index}
+                                        class="slds-p-around_medium" style="margin-right: -12px;">
+                                    </lightning-input>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </template>
+                        <template if:false={answer.New_Product}>
+                            <template lwc:if={answer.pbeId}>
+                                <c-look-up-component object-api-name="PricebookEntry" icon-name="standard:account"
+                                    data-index={answer.index} style="width: 180" data-label="prodId"
+                                    index={answer.index} default-record-id={answer.pbeId} return-fields=""
+                                    family={answer.prodFamily} currency-code={currencyCode} sort-column=""
+                                    display-fields="" query-fields="" onrecordselection={lookupRecord}
+                                    onfocus={lookupRecord}>
+                                </c-look-up-component>
+                            </template>
+
+                            <template lwc:else>
+                                <c-look-up-component object-api-name="PricebookEntry" icon-name="standard:account"
+                                    data-index={answer.index} style="width: 180" data-label="prodId" return-fields=""
+                                    family={answer.prodFamily} sort-column="" display-fields=""
+                                    currency-code={currencyCode} query-fields="" onrecordselection={lookupRecord}
+                                    onfocus={lookupRecord}>
+                                </c-look-up-component>
+                            </template>
+                        </template>
+
+
+
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-p-around_small" key={answer.index} size="1" large-device-size="1"
+                        small-device-size="12">
+                        <lightning-input variant="label-hidden" data-label="volume" value={answer.volume}
+                            data-index={answer.index} onchange={handleScoreChange}></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-p-around_small" key={answer.index} size="2" large-device-size="2"
+                        small-device-size="12">
+                        <lightning-input variant="label-hidden" data-label="address" value={answer.address}
+                            data-index={answer.index} onchange={handleScoreChange}></lightning-input>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-p-around_small" key={answer.index} size="2" large-device-size="2"
+                        small-device-size="12">
+                        <lightning-textarea variant="label-hidden" data-label="remark" data-index={answer.index}
+                            value={answer.remarks} onchange={handleScoreChange}></lightning-textarea>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-p-around_small" key={answer.index} size="1" large-device-size="1"
+                        small-device-size="12">
+                        <div style="display:flex" class="">
+                            <lightning-button-icon icon-name="utility:add" alternative-text="Remove"
+                                title="Remove Answer" onclick={addAnswerItem} data-index={answer.index}>
+                            </lightning-button-icon>
+                            <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                                title="Remove Answer" onclick={removeAnswer} data-index={answer.index}
+                                class="slds-m-left_xx-small">
+                            </lightning-button-icon>
+                        </div>
+                    </lightning-layout-item>
+
+
+                </template>
+
+            </lightning-layout>
+
+
+
+        </div>
+
+
+
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" if:false={isFirstPage}>
+                <lightning-button class="" onclick={handleCancel} label="Cancel"></lightning-button>
+                <lightning-button class="slds-m-left_small" variant="brand" onclick={save} label="Save">
+                </lightning-button>
+            </div>
+        </div>
+
+
+
+
+
+    </lightning-card>
+</template>

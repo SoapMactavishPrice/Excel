@@ -1,0 +1,190 @@
+<template>
+
+    <lightning-card>
+        <template if:true={showSpinner}>
+            <lightning-spinner size="xx-small"></lightning-spinner>
+        </template>
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="5">
+                <div style="display:flex">
+                    <lightning-icon icon-name="standard:account" alternative-text="Account"
+                        title="Account"></lightning-icon>
+                    <label style="font-size: 16px;"
+                        class="slds-m-left_small slds-m-top_xx-small slds-text-heading_large slds-text-title_caps slds-text-title_bold">Add
+                        Milestone</label>
+                </div>
+            </lightning-layout-item>
+
+
+            <lightning-layout-item size="4">
+                <div style="display:flex">
+                    <label class="slds-text-title_bold slds-m-right_small slds-m-top_xx-small">Select Product
+                        Category</label>
+                    <lightning-combobox name="industry" label="Industry" value={value} variant="label-hidden"
+                        options={picklistOptions} onchange={handleChange}></lightning-combobox>
+
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="2">
+                <div style="display:flex">
+                   <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+                   <lightning-button label="Save"  variant="brand" class="slds-m-left_small" onclick={handleMileStoneSave}></lightning-button>
+
+                </div>
+            </lightning-layout-item>
+
+        </lightning-layout>
+        <lightning-layout-item size="12">
+            <table style="width: 98%;"
+                class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right ">
+                <thead>
+                    <tr>
+                        <th class="" scope="col" style="background-color: #063190; color: #fff;width: 1%;">
+                            Action
+                        </th>
+                        <th class="" scope="col" style="background-color: #063190; color: #fff;width: 20%;">
+                            Milestone Master Name
+                        </th>
+                        <th class="" scope="col" style="background-color:#063190; color: #fff;width: 20%">
+                            <div class="text-align:center;slds-truncate" title="Case Number">Milestone Code</div>
+                        </th>
+
+                        <th class="" scope="col" style="background-color:#063190; color: #fff;width: 20%">
+                            <div class="text-align:center;slds-truncate" title="Case Number">Milestone Sequence
+                            </div>
+                        </th>
+
+                        <th class="" scope="col" style="background-color: #063190; color: #fff;width: 20%">
+                            <div class="text-align:center;slds-truncate" title="Case Number">Milestone Description</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <template for:each={mileStoneList} for:index="index" for:item="item">
+                        <tr key={item.Id}>
+                            <td>
+                                <lightning-icon icon-name="utility:add" size="x-small" if:false={item.isOpen}
+                                    data-id={item.Id} data-index={item.index} alternative-text="Connected"
+                                    title="Connected" onclick={hanldeOpenChild}>
+                                </lightning-icon>
+                                <lightning-icon icon-name="utility:dash" size="x-small" if:true={item.isOpen}
+                                    data-id={item.Id} data-index={item.index} alternative-text="Connected"
+                                    title="Connected" onclick={hanldeOpenChild}>
+                                </lightning-icon>
+
+                            </td>
+                            <td>{item.Name}</td>
+                            <td>{item.Milestone_Code}</td>
+                            <td>{item.Milestone_Sequence}</td>
+                            <td>
+                                <lightning-record-view-form record-id={item.Id} object-api-name="Milestone_Master__c">
+                                    <lightning-output-field
+                                        style="white-space: normal !important;word-break: break-word !important;"
+                                        variant="label-hidden"
+                                        field-name="Milestone_Description__c"></lightning-output-field>
+                                </lightning-record-view-form>
+                            </td>
+                        </tr>
+                        <tr key={item.Id} if:true={item.isOpen}>
+
+                            <td colspan="5">
+                                <table style="width: 98%;margin-left: 37px;"
+                                    class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right ">
+                                    <thead>
+                                        <th class="" scope="col"
+                                            style="background-color: #063190; color: #fff;width: 1%;">
+                                            Assessment Sequence
+                                        </th>
+                                        <th class="" scope="col"
+                                            style="background-color: #063190; color: #fff;width: 20%;">
+                                            Criteria Measure
+                                        </th>
+                                        <th class="" scope="col"
+                                            style="background-color:#063190; color: #fff;width: 20%">
+                                            <div class="text-align:center;slds-truncate" title="Case Number">Question
+                                                Type</div>
+                                        </th>
+
+                                        <th class="" scope="col"
+                                            style="background-color:#063190; color: #fff;width: 20%">
+                                            <div class="text-align:center;slds-truncate" title="Case Number">Assessment
+                                                Question
+                                            </div>
+                                        </th>
+
+                                        <th class="" scope="col"
+                                            style="background-color: #063190; color: #fff;width: 20%">
+                                            <div class="text-align:center;slds-truncate" title="Case Number">Assessment
+                                                Remarks</div>
+                                        </th>
+
+                                    </thead>
+                                    <tbody>
+                                        <!-- <td colspan="5" if:true={item.msg}>{item.msg}</td> -->
+                                        <template for:each={item.Assessment_Master} for:index="index" for:item="ans">
+                                            <tr key={item.Id}  if:true={ans.msg}><td colspan="5" style="text-align: center;"><label class="slds-text-title_caps slds-text-title_bold">{ans.msg}</label></td></tr>
+                                            <tr key={ans.Id} if:false={ans.msg}>
+                                                <td>{ans.Name}</td>
+                                                <td>{ans.Criteria_Measure}</td>
+                                                <td>{ans.Question_Type}</td>
+                                                <td
+                                                    style="white-space: normal !important;word-break: break-word !important;">
+                                                    {ans.Assessment_Question}</td>
+                                                <td
+                                                    style="white-space: normal !important;word-break: break-word !important;">
+                                                    {ans.Assessment_Remarks}</td>
+
+                                            </tr>
+
+                                        </template>
+                                    </tbody>
+
+
+                                </table>
+                            </td>
+                        </tr>
+
+
+                        <tr key={item.Id} if:true={item.isOpen}>
+
+                            <td colspan="5">
+                                <table style="width: 98%;margin-left: 37px;"
+                                    class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right ">
+                                    <thead>
+                                        <th class="" scope="col"
+                                            style="background-color: #063190; color: #fff;width: 1%;">
+                                            Name
+                                        </th>
+                                        <th class="" scope="col"
+                                            style="background-color: #063190; color: #fff;width: 20%;">
+                                            Question
+                                        </th>
+                                        <th class="" scope="col"
+                                            style="background-color:#063190; color: #fff;width: 20%">
+                                            <div class="text-align:center;slds-truncate" title="Case Number">Decision
+                                            </div>
+                                        </th>
+                                    </thead>
+                                    <tbody>
+                                        <!-- <td colspan="5" if:true={item.msg}>{item.msg}</td> -->
+                                        <template for:each={item.Decision_Criteria_Master} for:index="index" for:item="ans">
+                                            <tr key={item.Id} if:true={ans.msg}><td colspan="5" style="text-align: center;"><label class="slds-text-title_caps slds-text-title_bold">{ans.msg}</label></td></tr>
+                                            <tr key={ans.Id} if:false={ans.msg}>
+                                                <td>{ans.Name}</td>
+                                                <td>{ans.Question}</td>
+                                                <td>{ans.Decision}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+
+
+                                </table>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
+        </lightning-layout-item>
+    </lightning-card>
+</template>

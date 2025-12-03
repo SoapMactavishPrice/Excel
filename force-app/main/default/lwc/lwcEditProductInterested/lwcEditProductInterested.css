@@ -1,0 +1,6 @@
+.lightning-input:hover,
+.lightning-record-view-form:hover {
+    pointer-events: none;
+    background-color: transparent !important; /* Removes background color change on hover */
+    box-shadow: none !important; /* Disables box shadow on hover */
+}

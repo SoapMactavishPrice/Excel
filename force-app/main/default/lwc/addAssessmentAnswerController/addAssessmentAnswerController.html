@@ -1,0 +1,187 @@
+<template>
+    <!-- <lightning-quick-action-panel header="New Assessment Master"> -->
+    <lightning-card>
+
+
+        <lightning-layout multiple-rows>
+            <lightning-layout-item size="12">
+                <div style="display:flex">
+                    <lightning-icon icon-name="standard:account" alternative-text="Account" title="Account">
+                    </lightning-icon>
+                    <label style="font-size: 16px;"
+                        class="slds-m-left_small slds-m-top_xx-small slds-text-heading_large slds-text-title_bold">
+                        New Assessment Master</label>
+                </div>
+            </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout multiple-rows class="slds-m-around_x-small">
+            <!-- <lightning-layout-item class="slds-m-horizontal_x-small" size="2">
+                <strong></strong>
+            </lightning-layout-item> -->
+
+            <lightning-layout-item class="" size="3">
+                <div style="display:flex">
+                <label style="width:20%"><strong>Seq No</strong></label>
+                <label class="slds-m-left_small"><strong>Assessment Remarks</strong></label>
+            </div>
+            </lightning-layout-item>
+            <lightning-layout-item class="" size="2">
+                <strong>Criteria Measure</strong>
+            </lightning-layout-item>
+            <lightning-layout-item class="" size="2">
+                <strong>Assessment Question</strong>
+            </lightning-layout-item>
+            <lightning-layout-item class="" size="1">
+                <strong>Responsibilty Role</strong>
+            </lightning-layout-item>
+            <lightning-layout-item class="" size="1">
+                <strong>Responsibilty User</strong>
+            </lightning-layout-item>
+            <lightning-layout-item class="" size="1">
+                <strong>Accessor Role</strong>
+            </lightning-layout-item>
+            <!-- <lightning-layout-item class="" size="1">
+                <strong>Accessor User</strong>
+            </lightning-layout-item>
+            
+            <lightning-layout-item class="" size="1">
+                <strong>Action</strong>
+
+            
+            </lightning-layout-item> -->
+
+
+
+            <lightning-layout-item class="" size="2">
+                <div style="display:flex">
+                <label style="width:70%"><strong>Accessor User</strong></label>
+                <label class="slds-m-left_small"><strong>Action</strong></label>
+            </div>
+            </lightning-layout-item>
+
+
+            <template for:each={addAnswer} for:item="answer">
+
+                <!-- <lightning-layout-item class="slds-m-horizontal_x-small" key={answer.index} size="2">
+
+                </lightning-layout-item> -->
+
+                <lightning-layout-item class="" key={answer.index} size="3">
+                <div style="display:flex">
+                    <lightning-input variant="label-hidden" style="width:20%;padding: 3px;" data-label="Assessment_Score" data-index={answer.index}
+                    onchange={handleScoreChange}></lightning-input>
+                    <lightning-input variant="label-hidden" data-label="Assessment_Answer" class="slds-m-left_xx-small" data-index={answer.index} style="width:80%;padding: 3px;"
+                        onchange={handleScoreChange}></lightning-input>
+                </div>
+                </lightning-layout-item>
+
+                <!-- <lightning-layout-item class="" key={answer.index} size="1">
+                    <lightning-input variant="label-hidden" data-label="Assessment_Score" data-index={answer.index} style="padding: 3px;"
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <lightning-input variant="label-hidden" data-label="Assessment_Answer" data-index={answer.index} style="padding: 3px;"
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item> -->
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <lightning-input variant="label-hidden" data-label="Criteria_Measure" data-index={answer.index} style="padding: 3px;"
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <lightning-input variant="label-hidden" data-label="Assessment_Question" data-index={answer.index} style="padding: 3px;"
+                        onchange={handleScoreChange}></lightning-input>
+                </lightning-layout-item>
+                <lightning-layout-item class="" key={answer.index} size="1">
+                    <!-- <lightning-combobox name="respRole" data-label="respRole" label="Accessor Role" data-index={answer.index}
+                        variant="label-hidden" options={respRoleOptions}
+                        onchange={handleScoreChange}></lightning-combobox> -->
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form object-api-name="Assessment_Master__c">
+                        <lightning-input-field field-name="Responsibilty_Role__c" onchange={handleScoreChange}
+                            data-index={answer.index} data-label="respRole" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>
+
+                <lightning-layout-item class="" key={answer.index} size="1">
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form object-api-name="Assessment_Master__c">
+                        <lightning-input-field field-name="Responsibilty_User__c" onchange={handleScoreChange}
+                            data-index={answer.index} data-label="respRoleUser" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>    
+
+                <lightning-layout-item class="" key={answer.index} size="1">
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form object-api-name="Assessment_Master__c" >
+                        <lightning-input-field field-name="Accessor_Role__c" onchange={handleScoreChange}  style="width:70%"
+                            data-index={answer.index} data-label="accessorRole" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>
+
+                <!-- <lightning-layout-item class="" key={answer.index} size="1">
+                    <div style="padding: 3px;"> 
+                    <lightning-record-edit-form object-api-name="Assessment_Master__c">
+                        <lightning-input-field field-name="Accessor_User__c" onchange={handleScoreChange} 
+                            data-index={answer.index} data-label="accessorRoleUser" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    </div>
+                </lightning-layout-item>
+
+
+
+                <lightning-layout-item class="" key={answer.index} size="1">
+                    <div style="display:flex" class="" >
+                        <lightning-button-icon icon-name="utility:add" alternative-text="Remove" title="Remove Answer"
+                            onclick={addAnswerItem} data-index={answer.index}>
+                        </lightning-button-icon>
+                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove"
+                            title="Remove Answer" onclick={removeAnswer} data-index={answer.index}
+                            class="slds-m-left_x-small">
+                        </lightning-button-icon>
+                    </div>
+                </lightning-layout-item> -->
+
+
+
+                <lightning-layout-item class="" key={answer.index} size="2">
+                    <div style="padding: 3px;display:flex"> 
+                    <lightning-record-edit-form object-api-name="Assessment_Master__c">
+                        <lightning-input-field field-name="Accessor_User__c" onchange={handleScoreChange}  class="slds-m-right_small"
+                            data-index={answer.index} data-label="accessorRoleUser" variant="label-hidden">
+                        </lightning-input-field>
+                    </lightning-record-edit-form>
+                    
+                    
+                        <lightning-button-icon icon-name="utility:add" alternative-text="Remove" variant="brand" title="Remove Answer" style="margin-left:2px"
+                            onclick={addAnswerItem} data-index={answer.index}>
+                        </lightning-button-icon>
+                        <lightning-button-icon icon-name="utility:delete" alternative-text="Remove" variant="destructive" 
+                            title="Remove Answer" onclick={removeAnswer} data-index={answer.index}
+                            class="slds-m-left_x-small">
+                        </lightning-button-icon>
+                    </div>
+                </lightning-layout-item>
+
+
+            </template>
+
+        </lightning-layout>
+
+        <div slot="footer">
+            <div class="slds-align_absolute-center" style="display:flex">
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button variant="brand" label="Save" class="slds-m-left_x-small" onclick={save}>
+                </lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+    <!-- </lightning-quick-action-panel> -->
+</template>

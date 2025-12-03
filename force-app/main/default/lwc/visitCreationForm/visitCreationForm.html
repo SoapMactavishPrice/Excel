@@ -1,0 +1,159 @@
+<template>
+
+    <lightning-card title="Create Visit" icon-name="standard:event">
+        <div class="slds-p-around_xx-small">
+
+            <template for:each={visitRows} for:item="row">
+                <div key={row.id} style="border: 1px solid; margin: 13px 5px; border-radius: 5px;">
+
+                    <!-- Top Row (5 Fields) -->
+                    <lightning-layout multiple-rows>
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                            <lightning-combobox name="visitFor" label="Visit For" value={row.visitFor}
+                                options={visitForOptions} data-row-id={row.id} onchange={handleVisitForChange} required>
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                            <lightning-record-picker label="Lead/Account" placeholder="Search..."
+                                object-api-name={row.recordPickerObject} display-field="Name" value={row.accountId}
+                                data-row-id={row.id} onchange={handleRecordSelection} required>
+                            </lightning-record-picker>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                            <lightning-combobox value={row.purpose} options={visitPurposeOptions} label="Visit Purpose"
+                                data-row-id={row.id} onchange={handlePurposeChange}>
+                            </lightning-combobox>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="3">
+                            <lightning-input type="datetime" label="Visit Start" value={row.startDateTime}
+                                data-row-id={row.id} onchange={handleStartDateChange} required>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="3">
+                            <lightning-input type="datetime" label="Visit End" value={row.endDateTime}
+                                data-row-id={row.id} onchange={handleEndDateChange} required>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+                    </lightning-layout>
+
+                    <!-- Bottom Row (4 Fields + Add Icon) -->
+                    <lightning-layout multiple-rows>
+
+                        <!-- Internal Attendees -->
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                            <label class="slds-form-element__label">Internal Attendees</label>
+                            <c-enhanced-custom-lookup style="width: 100%;" object-api-name="User"
+                                filter="isActive = true" icon-name="standard:user" query-fields="['Name']"
+                                data-index={index} data-api="Attendees" data-row-id={row.id}
+                                onrecordselection={handleAddAttendees}>
+                            </c-enhanced-custom-lookup>
+
+                            <template if:true={row.attendees}>
+                                <div class="slds-p-top_xx-small">
+                                    <template for:each={row.attendees} for:item="attendee">
+                                        <template if:true={attendee.name}>
+                                            <lightning-pill key={attendee.id} label={attendee.name} data-row-id={row.id}
+                                                data-attendee-id={attendee.id} onremove={handleRemoveAttendee}>
+                                            </lightning-pill>
+                                        </template>
+                                    </template>
+                                </div>
+                            </template>
+                        </lightning-layout-item>
+
+                        <!-- External Contacts -->
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                            <label class="slds-form-element__label">External Attendees</label>
+                            <c-enhanced-custom-lookup style="width: 100%;" object-api-name="Contact"
+                                filter={row.contactFilter} icon-name="standard:contact" query-fields="['Name']"
+                                data-index={index} data-api="ExternalContacts" data-row-id={row.id}
+                                onrecordselection={handleAddExternalContacts}>
+                            </c-enhanced-custom-lookup>
+
+                            <template if:true={row.externalContacts}>
+                                <div class="slds-p-top_xx-small">
+                                    <template for:each={row.externalContacts} for:item="contact">
+                                        <template if:true={contact.name}>
+                                            <lightning-pill key={contact.id} label={contact.name} data-row-id={row.id}
+                                                data-contact-id={contact.id} onremove={handleRemoveExternalContact}>
+                                            </lightning-pill>
+                                        </template>
+                                    </template>
+                                </div>
+                            </template>
+                        </lightning-layout-item>
+
+                          <lightning-layout-item padding="around-small" size="12" large-device-size="2">
+                              <lightning-input type="date" label="Next Action Date" value={row.Action_To_Do_Date__c}
+                                data-row-id={row.id} onchange={handleEndDateChange}>
+                            </lightning-input>
+                        </lightning-layout-item>
+
+  <lightning-layout-item padding="around-small" size="12" large-device-size="3">
+                          <div class="custom-container" style="width:100%">
+                                    <label class="slds-form-element__label" for="visitDesc">Next Action To Do</label>
+                                    <div class="slds-form-element__control">
+                                        <textarea id="nextAction" class="custom-textarea" data-row-id={row.id}
+                                            onchange={handleDescriptionChange}>{row.description}</textarea>
+                                    </div>
+                                </div>
+                        </lightning-layout-item>
+
+                        <!-- Visit Description -->
+                        <lightning-layout-item padding="around-small" size="12" large-device-size="3">
+                            <div style="display:flex">
+                                <!-- <lightning-textarea label="Visit Description" value={row.description} style="width: 90%;"
+                    data-row-id={row.id} onchange={handleDescriptionChange}>
+                </lightning-textarea> -->
+                                <div class="custom-container" style="width:90%">
+                                    <label class="slds-form-element__label" for="visitDesc">Visit Description</label>
+                                    <div class="slds-form-element__control">
+                                        <textarea id="visitDesc" class="custom-textarea" data-row-id={row.id}
+                                            onchange={handleDescriptionChange}>{row.description}</textarea>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters slds-align-middle" style="margin-left: 2%;">
+                                    <template if:true={row.showAdd}>
+                                        <lightning-icon icon-name="action:new" alternative-text="Add" title="Add Row"
+                                            onclick={handleAddRow} size="x-small">
+                                        </lightning-icon>
+                                    </template>
+                                    <template if:true={row.showDelete}>
+                                        <lightning-icon icon-name="action:delete" alternative-text="Delete"
+                                            title="Delete Row" data-row-id={row.id} onclick={handleRemoveRow}
+                                            size="x-small">
+                                        </lightning-icon>
+                                    </template>
+                                </div>
+                            </div>
+                        </lightning-layout-item>
+
+                      
+
+                        <!-- Add/Delete Icons -->
+                        <!-- <lightning-layout-item padding="around-small" size="12" large-device-size="1">
+                
+            </lightning-layout-item> -->
+
+                    </lightning-layout>
+                </div>
+            </template>
+
+
+
+
+            <!-- Save/Cancel -->
+            <div class="slds-m-top_medium slds-align_absolute-center">
+                <lightning-button variant="neutral" label="Cancel" onclick={handleCancel} class="slds-m-right_x-small">
+                </lightning-button>
+                <lightning-button variant="brand" label="Create Visit" disabled={isSaveDisabled}
+                    onclick={handleSave}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

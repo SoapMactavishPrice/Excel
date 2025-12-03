@@ -1,0 +1,91 @@
+<template>
+    <lightning-card style="margin-left: 368px;" class="slds-text-align_center">
+        <template if:true={showSpinner}>
+            <lightning-spinner size="medium"></lightning-spinner>
+        </template>
+
+        <div class="slds-p-around_medium">
+            <!-- Order Information Section -->
+            <div class="slds-grid slds-wrap">
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-input label="Account Name" value={accountName} disabled></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-input type="text" label="Customer PO Number" value={poNumber}
+                        onchange={handlePoNumberChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-input type="date" label="PO Received Date" value={poReceivedDate}
+                        onchange={handlePoReceivedDateChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-input type="date" label="Effective Date" value={effectiveDate}
+                        onchange={handleEffectiveDateChange}></lightning-input>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-combobox label="Status" value={status} options={statusOptions}
+                        onchange={handleStatusChange}></lightning-combobox>
+                </div>
+                <div class="slds-col slds-size_1-of-3 slds-p-around_x-small">
+                    <lightning-combobox label="Currency" value={currency} options={currencyOptions}
+                        onchange={handleCurrencyChange}></lightning-combobox>
+                </div>
+            </div>
+
+            <!-- Order Line Items Section -->
+            <div class="slds-m-top_large">
+                <div class="slds-table slds-table_bordered slds-table_cell-buffer">
+                    <table class="slds-table slds-table_bordered slds-table_cell-buffer">
+                        <thead>
+                            <tr class="slds-line-height_reset">
+                                <th class="slds-text-align_center">Product</th>
+                                <th class="slds-text-align_center">Quantity</th>
+                                <th class="slds-text-align_center">Unit Price</th>
+                                <th class="slds-text-align_center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={lineItems} for:item="item" for:index="index">
+                                <tr key={item.key} class="slds-hint-parent">
+                                    <td>
+                                        <c-look-up-component object-api-name="Product2" icon-name="standard:product"
+                                            data-index={index} return-fields="Id,Name,ProductCode,Family,Description"
+                                            display-fields="Name,ProductCode" onrecordselection={handleProductSelection}
+                                            family={item.productFamily} currency-code={currency}>
+                                        </c-look-up-component>
+                                        <div if:true={item.productName} class="slds-p-top_x-small">
+                                            {item.productName} ({item.productCode})
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <lightning-input type="number" value={item.quantity} data-index={index}
+                                            onchange={handleQuantityChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-input type="number" value={item.unitPrice} formatter="currency"
+                                            data-index={index} onchange={handlePriceChange}>
+                                        </lightning-input>
+                                    </td>
+                                    <td>
+                                        <lightning-button-icon icon-name="utility:add" onclick={handleAddItem}>
+                                        </lightning-button-icon>
+                                        <lightning-button-icon icon-name="utility:delete" onclick={handleRemoveItem}
+                                            data-index={index}>
+                                        </lightning-button-icon>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="slds-m-top_large slds-text-align_center">
+                <lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+                <lightning-button label="Save" variant="brand" onclick={handleSave}></lightning-button>
+            </div>
+        </div>
+    </lightning-card>
+</template>

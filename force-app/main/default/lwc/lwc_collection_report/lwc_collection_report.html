@@ -1,0 +1,380 @@
+<template>
+    
+    <lightning-card>
+        <div if:true={showSpinner}>
+            <lightning-spinner variant="brand" alternative-text="Loading" size="medium"></lightning-spinner>
+        </div>
+        <div>
+        <lightning-button label="Download XLS" onclick={downloadTableAsXls} variant="brand" value="production" class="slds-m-around_medium"></lightning-button>
+        </div>
+<div style="overflow: auto;height:31rem" class="slds-m-top_small">
+    <table class="slds-table slds-table_bordered monthlytable">
+                    <thead class="tablcls centerAlign">
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell" colspan="22">
+                                <div><strong>{currentMonthName}</strong></div>
+                            </th>
+                        </tr>
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell commonleftfirstColumnv3">
+                                <div class="commonLeftForSecondcol">Headers</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="5">
+                                <div class="commonLeftForSecondcol">ERP Collectibles</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="6">
+                                <div class="commonLeftForSecondcol">Collection Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="6">
+                                <div class="commonLeftForSecondcol">Actual Collection Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" colspan="3">
+                                <div class="commonLeftForSecondcol">Balance Collectibles</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">%</div>
+                            </th>
+                        </tr>
+
+
+                        <tr class="slds-text-title_caps">
+                            <th scope="col" class="header-cell commonleftfirstColumnv2">
+                                <div>Customer Name</div>
+                            </th>
+                            <th scope="col" class="header-cell">
+                                <div class="commonLeftForSecondcol">ERP Collectibles <br/>(Due Prev Month)</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">1-10th</div>
+                            </th>
+                            <th scope="col" class="header-cell">
+                                <div class="commonLeftForSecondcol">11-20th</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">21-31st</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Total ERP<br/> Collectibles</div>
+                            </th>
+
+                            <!-- Collection Plan -->
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">1-10th</div>
+                            </th>
+                            <th scope="col" class="header-cell">
+                                <div class="commonLeftForSecondcol">11-20th</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">21-31st</div>
+                            </th>
+                            
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">ERP Plan</div>
+                            </th>
+
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Imm / Adv Plan</div>
+                            </th>
+
+                            
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Total Collection<br/> Plan</div>
+                            </th>
+
+
+
+                            <!-- Actua Plan -->
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">1-10th</div>
+                            </th>
+                            <th scope="col" class="header-cell">
+                                <div class="commonLeftForSecondcol">11-20th</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">21-31st</div>
+                            </th>
+                            
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">ERP Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Imm / Adv Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Total Collection<br/> Plan</div>
+                            </th>
+
+
+                            <!-- Balance -->
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Bal ERP Coll Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell">
+                                <div class="commonLeftForSecondcol">Bal Imm / <br/>Adv Coll Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Total Shortfall /<br/> Excess in Coll Plan</div>
+                            </th>
+                            <th scope="col" class="header-cell" >
+                                <div class="commonLeftForSecondcol">Plan Vs<br/> Actuals</div>
+                            </th>
+
+                        </tr>
+                    </thead>
+                     <tbody>
+                        <template for:each={collectionLoadingList} for:item="load">
+                            <tr key={load.ParameterId}><td class="body-cell " colspan="22"><strong>{load.ParameterPGName}</strong></td ></tr>
+                            <template for:each={load.lineData} for:item="item">
+                            <tr key={item.Id}>
+                                <td class="body-cell commonleftfirstColumn">
+                                    <label class="slds-p-around_xx-small">{item.Customer_Name_Backend_c}</label>
+                                </td>
+                                <template for:each={item.Collection_Plan_Line_Item_r} for:item="childItem">
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Collectibles_Due_Previous_Month_c}>{childItem.ERP_Collectibles_Due_Previous_Month_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Collectibles_110th_c}>{childItem.ERP_Collectibles_110th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Collectibles_1120th_c}>{childItem.ERP_Collectibles_1120th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Collectibles_2131st_c}>{childItem.ERP_Collectibles_2131st_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Total_ERP_Collectibles_c}>{childItem.Total_ERP_Collectibles_c}</label>
+                                    </td>
+
+                                    <!--collection plan-->
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Collection_Plan_110th_c}>{childItem.Collection_Plan_110th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Collection_Plan_1120th_c}>{childItem.Collection_Plan_1120th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Collection_Plan_2131st_c}>{childItem.Collection_Plan_2131st_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Plan_c}>{childItem.ERP_Plan_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Imm_Adv_Plan_c}>{childItem.Imm_Adv_Plan_c}</label>
+                                    </td>
+
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Total_Collection_Plan_c}>{childItem.Total_Collection_Plan_c}</label>
+                                    </td>
+
+                                    <!-- Actual collections -->
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Collection_Plan_110th_c}>{childItem.Actual_Collection_110th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Actual_Collection_1120th_c}>{childItem.Actual_Collection_1120th_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Actual_Collection_2131st_c}>{childItem.Actual_Collection_2131st_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Actual_Coll_c}>{childItem.ERP_Actual_Coll_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Imm_Adv_Actual_Coll_c}>{childItem.Imm_Adv_Actual_Coll_c}</label>
+                                    </td>
+
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.ERP_Actual_Coll_c}>{childItem.Total_Actual_Collection_c}</label>
+                                    </td>
+
+
+                                    <!-- balacne collectibles-->
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Bal_ERP_Coll_Plan_c}>{childItem.Bal_ERP_Coll_Plan_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Bal_Imm_Adv_Coll_Plan_c}>{childItem.Bal_Imm_Adv_Coll_Plan_c}</label>
+                                        <label if:false={childItem.Bal_Imm_Adv_Coll_Plan_c}>0</label>
+
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Total_Shortfall_Excess_in_Coll_Plan_c}>{childItem.Total_Shortfall_Excess_in_Coll_Plan_c}</label>
+                                    </td>
+                                    <td key={childItem.Id} class="body-cell">
+                                        <label if:true={childItem.Plan_Vs_Actuals_c}>{childItem.Plan_Vs_Actuals_c}</label>
+                                    </td>
+                                    
+                                </template>
+                 
+                            </tr>
+                            
+                            </template>
+                            <tr key={load.Id} style="background: #efefef;">
+                                <td class="body-cell commonleftfirstColumn">
+                                    <label class="slds-p-around_xx-small slds-text-title_bold"><strong>{load.totalLabel}</strong></label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_ERP_Collectibles_Due_Previous_Month_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_ERP_Collectibles_110th_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold" >{load.total.total_ERP_Collectibles_1120th_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_ERP_Collectibles_2131st_c}</label>
+                                </td>
+
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Total_ERP_Collectibles_c}</label>
+                                </td>
+                                
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_ERP_Collectibles_110th_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Collection_Plan_1120th_c}</label>
+                                </td>
+                                
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Collection_Plan_2131st_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_ERP_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Imm_Adv_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Total_Collection_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Actual_Collection_110th_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Actual_Collection_1120th_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Actual_Collection_2131st_c}</label>
+                                </td><td class="body-cell">
+                                    <label class=" slds-text-title_bold" >{load.total.total_ERP_Actual_Coll_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Imm_Adv_Actual_Coll_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Total_Actual_Collection_c}</label>
+                                </td><td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Bal_ERP_Coll_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Bal_Imm_Adv_Coll_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.Total_Shortfall_Excess_in_Coll_Plan_c}</label>
+                                </td>
+                                <td class="body-cell">
+                                    <label class=" slds-text-title_bold">{load.total.total_Plan_Vs_Actuals_c}</label>
+                                </td>
+
+                                </tr>
+                        </template>
+
+                        <tr style="background: #efefef;">
+                            <td class="body-cell commonleftfirstColumnv2">
+                                <label class="slds-p-around_xx-small slds-text-title_bold"><strong>GRAND TOTAL</strong></label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_ERP_Collectibles_Due_Previous_Month_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_ERP_Collectibles_110th_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold" >{grandTotals.grandTotal_ERP_Collectibles_1120th_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_ERP_Collectibles_2131st_c}</label>
+                            </td>
+
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Total_ERP_Collectibles_c}</label>
+                            </td>
+                            
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_ERP_Collectibles_110th_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Collection_Plan_1120th_c}</label>
+                            </td>
+                            
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Collection_Plan_2131st_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_ERP_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Imm_Adv_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Total_Collection_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Actual_Collection_110th_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Actual_Collection_1120th_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Actual_Collection_2131st_c}</label>
+                            </td><td class="body-cell">
+                                <label class=" slds-text-title_bold" >{grandTotals.grandTotal_ERP_Actual_Coll_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Imm_Adv_Actual_Coll_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Total_Actual_Collection_c}</label>
+                            </td><td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Bal_ERP_Coll_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Bal_Imm_Adv_Coll_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Shortfall_Excess_in_Coll_Plan_c}</label>
+                            </td>
+                            <td class="body-cell">
+                                <label class=" slds-text-title_bold">{grandTotals.grandTotal_Plan_Vs_Actuals_c}</label>
+                            </td>
+
+                            </tr>
+
+                       
+
+                        <!-- <template for:each={MonthTotal} for:item="item">
+                            <tr key={item.label}>
+                                <td class="body-cell">
+                                    <label class="slds-p-around_xx-small"><strong>{item.label}</strong></label>
+                                </td>
+                                <td class="body-cell" colspan="10">
+                                    <label class="slds-p-around_xx-small"></label>
+                                </td>
+                                <template for:each={item.totalMonthViseValue} for:item="month">
+                                    <td key={month.index} class="body-cell">
+                                            <label class="slds-p-around_xx-small">
+                                                <strong>{month.total}</strong>
+                                            </label>
+                                    </td>
+                                </template>
+                                </tr>
+                                </template>
+             -->
+                    </tbody>
+                </table>
+</div>
+                </lightning-card>
+</template>

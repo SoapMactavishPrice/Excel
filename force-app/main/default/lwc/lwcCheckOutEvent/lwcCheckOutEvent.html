@@ -1,0 +1,92 @@
+<template>
+    <lightning-card>
+        <!--  -->
+        <div class="wrapper">
+
+            <div class="form">
+                <div style="text-align: center; padding: 10px;">
+                    <h1 class="slds-p-bottom_large" style="text-align: center;font-weight:800; font-size:medium">
+                        <u>Check-Out
+                            Details</u>
+                    </h1>
+                </div>
+
+                <div class="inputfield">
+                    <label>Visit Result</label>
+                    <lightning-textarea class="slds-p-around_medium input" value={Visit_Result__c}
+                        data-id="Visit_Result__c" onchange={handleInputChange} variant="label-hidden">
+                    </lightning-textarea>
+                </div>
+                <div class="inputfield">
+                    <label>Visit Description</label>
+                    <lightning-textarea type="Text" class="slds-p-around_medium input" value={Description} data-id="Description"
+                        onchange={handleInputChange} variant="label-hidden">
+                    </lightning-textarea>
+                </div>
+                <div class="inputfield">
+                    <label>Client Feedback Or Insights</label>
+                    <lightning-textarea class="slds-p-around_medium input" value={Client_Feedback_Or_Insights__c}
+                        data-id="Client_Feedback_Or_Insights__c" onchange={handleInputChange} variant="label-hidden">
+                    </lightning-textarea>
+                </div>
+                <div class="inputfield">
+                    <label>Action To Do</label>
+                    <lightning-textarea class="slds-p-around_medium input" value={Action_To_Do__c}
+                        data-id="Action_To_Do__c" onchange={handleInputChange} variant="label-hidden">
+                    </lightning-textarea>
+                </div>
+                <div style="text-align: center; padding: 10px;">
+                    <lightning-button class="slds-p-left_large" label="Cancel" onclick={handleReset}></lightning-button>
+                    <lightning-button class="slds-p-left_large" variant="brand" label="Check Out"
+                        onclick={handleSave}></lightning-button>
+                </div>
+            </div>
+        </div>
+        <!--  -->
+
+        <!-- <div class="slds-p-around_large" style="padding: 30px;">
+            <h1 class="slds-p-bottom_large" style="text-align: center;font-weight:800; font-size:medium"><u>Check-Out
+                    Details</u></h1>
+            <table style="margin-left: auto; margin-right: auto;">
+                <tr>
+                    <td class="slds-p-left_x-small">Visit Result</td>
+                    <td class="slds-p-left_x-small slds-p-right_x-small">
+                        <lightning-input class="slds-p-around_medium" value={Visit_Result__c} data-id="Visit_Result__c"
+                            onchange={handleInputChange}>
+                        </lightning-input>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="slds-p-left_x-small">Visit Description In Details</td>
+                    <td class="slds-p-left_x-small slds-p-right_x-small">
+                        <lightning-input class="slds-p-around_medium" value={Visit_Description_In_Details__c}
+                            data-id="Visit_Description_In_Details__c" onchange={handleInputChange}>
+                        </lightning-input>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="slds-p-left_x-small">Client Feedback Or Insights</td>
+                    <td class="slds-p-left_x-small slds-p-right_x-small">
+                        <lightning-input class="slds-p-around_medium" value={Client_Feedback_Or_Insights__c}
+                            data-id="Client_Feedback_Or_Insights__c" onchange={handleInputChange}>
+                        </lightning-input>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="slds-p-left_x-small">Action To Do</td>
+                    <td class="slds-p-left_x-small slds-p-right_x-small">
+                        <lightning-input class="slds-p-around_medium" value={Action_To_Do__c} data-id="Action_To_Do__c"
+                            onchange={handleInputChange}>
+                        </lightning-input>
+                    </td>
+                </tr>
+            </table>
+
+            <div style="text-align: center; padding: 30px;">
+                <lightning-button class="slds-p-left_large" label="Cancel" onclick={handleReset}></lightning-button>
+                <lightning-button class="slds-p-left_large" variant="brand" label="CheckOut"
+                    onclick={handleSave}></lightning-button>
+            </div>
+        </div> -->
+    </lightning-card>
+</template>

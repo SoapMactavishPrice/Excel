@@ -1,0 +1,125 @@
+<apex:page controller="QuotationPDFController" applyHtmlTag="false" showHeader="false" docType="html-5.0" >
+    <head>
+        <apex:slds />
+    </head>
+    
+    <body style="width: 80%; margin: 0 auto" class="slds-scope">
+        <apex:pagemessages />
+        
+        <apex:outputText rendered="{!isValid}">
+            <!-- SAVE, SAVE AND SEND -->
+            <div style="width:80%; padding-bottom: 2%; margin: 0 auto">
+                <div style="padding: 5px">
+                    <apex:form id="myForm">
+                        <apex:inputHidden value="{!formSubmitted}" id="formSubmitted" />
+                        
+                        <div style="padding: 5px">
+                            <apex:inputText html-placeholder="Email ID" value="{!emailId}" styleClass="slds-input" />
+                            <apex:inputText html-placeholder="CC Addresses  (Comma Separated)" value="{!CC_Addresses}" styleClass="slds-input" style="margin-top: 5px" />
+                            <apex:inputText html-placeholder="Subject" value="{!subject}" styleClass="slds-input" style="margin-top: 5px; margin-bottom: 10px" />
+                            <apex:inputTextarea richText="true" value="{!body}" styleClass="slds-input" /> 
+                        </div>
+                        
+                        <div style="margin: 10px 5px; text-align: right">
+                            <apex:commandButton id="saveButton" action="{!save}" value="Save PDF" styleClass="slds-button slds-button_brand" onclick="return disableButtons();" />
+                            <apex:commandButton id="saveAndSendButton" action="{!saveAndSend}" value="Save And Send" styleClass="slds-button slds-button_brand" onclick="return disableButtons();" />
+                            <apex:commandButton id="cancelButton" action="{!cancel}" value="Cancel" styleClass="slds-button slds-button_destructive" onclick="return disableButtons();" />
+                        </div>
+                        
+                        <apex:actionStatus startText="Processing..." id="loadingStatus">
+                            <script>
+                                document.getElementById('saveButton').disabled = true;
+                                document.getElementById('saveAndSendButton').disabled = true;
+                                document.getElementById('cancelButton').disabled = true;
+                            </script>
+                        </apex:actionStatus>
+                    </apex:form>
+                    
+                    <apex:includeScript value="/soap/ajax/29.0/connection.js" />
+                    <script>
+                        function disableButtons() {
+                            var formSubmitted = document.getElementById('{!$Component.myForm.formSubmitted}').value;
+                            if (formSubmitted === 'true') {
+                                return false;
+                            }
+                            document.getElementById('{!$Component.myForm.formSubmitted}').value = 'true';
+
+                            document.getElementById('saveButton').disabled = true;
+                            document.getElementById('saveAndSendButton').disabled = true;
+                            document.getElementById('cancelButton').disabled = true;
+
+                            return true;
+                        }
+                    </script>
+                    
+                     <!-- JavaScript for Button Disabling and Toast Message -->
+                    <script>
+                    function disableButtons() {
+                        var formSubmitted = document.getElementById('{!$Component.myForm.formSubmitted}').value;
+                        if (formSubmitted === 'true') {
+                            return false; // Prevent double submission
+                        }
+                        document.getElementById('{!$Component.myForm.formSubmitted}').value = 'true';
+                        
+                        document.getElementById('sendButton').disabled = true;
+                        document.getElementById('cancelButton').disabled = true;
+                        
+                        return true; // Proceed with the button action
+                    }
+                    
+                    function showToast(message, type) {
+                        const toast = document.createElement('div');
+                        toast.className = 'toast ' + type;
+                        toast.innerText = message;
+                        
+                        document.body.appendChild(toast);
+                        
+                        setTimeout(function() {
+                            toast.style.opacity = '0';
+                            setTimeout(function() {
+                                document.body.removeChild(toast);
+                                if('{!sendEmailSuccess}'){
+                                    redirectToOpportunity(); 
+                                }
+                            }, 200);
+                        }, 1000);
+                    }
+                    
+                    function handleEmailResponse() {
+                        console.log('button is called-->','{!qId}');
+                        if ('{!sendEmailSuccess}') {
+                            showToast('Email sent successfully!', 'success');
+                        } else if ('{!sendEmailError}') {
+                            showToast('Error sending email. Please try again.', 'error');
+                        }
+                    }
+                    </script>
+                    
+                    <style>
+                        .toast {
+                        position: fixed;
+                        top: 0px;
+                        text-align: center;
+                        left: 40%;
+                        padding: 10px 20px;
+                        border-radius: 5px;
+                        color: white;
+                        opacity: 1;
+                        transition: opacity 0.5s ease-in-out;
+                        }
+                        .toast.success {
+                        background-color: green;
+                        }
+                        .toast.error {
+                        background-color: red;
+                        }
+                    </style>
+                    
+                    
+                </div>
+            </div>
+            
+            <iframe id="pdf" src="{!pdfURL}" style="width: 100%; height: 100vh"></iframe>
+        </apex:outputText>
+    </body>
+</apex:page>

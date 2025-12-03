@@ -1,0 +1,342 @@
+<template>
+    <lightning-card style="padding: 0px;">
+        <lightning-layout multiple-rows="true" style="margin-top: -14px;">
+            <lightning-layout-item size="6">
+                <div class="slds-m-horizontal_x-small">
+                    <table style="width: 100%;color: black;border-radius: 0px;"
+                        class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right slds-table_col-bordered custom-table">
+                        <thead>
+                            <tr>
+                                <th class="" colspan="6" scope="col"
+                                    style="background-color: #49f39b; color: #000000;width: 1%;font-size: 12px;">
+                                    <label class="slds-align_absolute-center"><strong>ASSESSMENT
+                                            CRITERIA</strong></label>
+                                </th>
+                            </tr>
+                            <tr style="height: 2rem">
+                                <th class="" scope="col" style="font-size: 12px;background-color: #eaeaea; color: #000000;width: 1%;">
+                                    <strong>Sr. No</strong>
+                                </th>
+                                <th class="" scope="col" style="font-size: 12px;background-color: #eaeaea; color: #000000;width: 45%;">
+                                    <strong>Carryout a Preliminary & Qualitative assessment ( Page):</strong>
+                                </th>
+                                <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;width: 25%">
+                                    <strong>Criteria Measure</strong>
+                                </th>
+                                <th class="" scope="col"
+                                    style="font-size: 12px;background-color:#eaeaea; color: #000000;width: 25%">
+                                    <strong>FPR</strong>
+                                </th>
+                                <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;width: 20%">
+                                    <strong>Assessment</strong>
+                                </th>
+                                    <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;">
+                                    <strong>File Upload</strong>
+                                </th>
+                               
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={assData} for:index="index" for:item="item">
+                                <tr key={item.Id} style="height: 5rem;vertical-align:top">
+                                    <td style="padding:1px;font-size: 11px;text-align:center">
+                                        {item.Name}
+                                    </td>
+                                    <td style="padding:1px;font-size: 11px;white-space: normal !important;word-break: break-word !important;">
+                                        {item.Assessment_Question__c}</td>
+                                    <td style="padding:1px;font-size: 11px;white-space: normal !important;word-break: break-word !important;">
+                                        {item.Criteria_Measure__c}</td>
+                                        <td style="padding:1px;font-size: 11px;text-align:center">
+                                            <div class="tooltip-container">
+                                                <span class="initials" title={item.title}>{item.initials}</span>
+                                            </div>
+                                        
+                                        </td>
+                                  <td>
+                                    
+                                        <lightning-input type="number" disabled={item.isDisbaled} data-name={item.Name} value={item.Assessment_Answer} variant="label-hidden"
+                                            onchange={handleOnchange} data-id={item.Id}></lightning-input>
+                                    </td>
+                                    
+                                    <td>
+                                        <div style="display:flex">
+                                        <div class="drop-container-wrapper">
+                                            <label class="drop-container">
+                                                <lightning-icon icon-name="action:upload" data-id={item.Id} if:true={item.isUserResponsible} 
+                                                    size="x-small" alternative-text="Approved" title="Approved">
+                                                </lightning-icon>
+
+                                                <lightning-file-upload type="file" accept=".jpg,.jpeg,.png,.pdf"
+                                                    record-id={item.Id} data-record-id={item.Id}
+                                                    onuploadfinished={handleUploadFinished} style="display: none"
+                                                    multiple></lightning-file-upload>
+                                            </label>
+                                        </div>
+                                     <lightning-icon icon-name="action:preview" alternative-text="Preview" size="x-small" data-id={item.Id} data-name={item.Name} title="Preview" onclick={previewFile}></lightning-icon>
+                                    </div>
+                                </td>
+
+                                </tr>
+
+                            </template>
+                            <tr style="">
+                                <td colspan="4" style="text-align:center"><strong>FINAL OUTCOME</strong></td>
+                                <td colspan="1" style="text-align:center"><strong>{total}</strong></td>
+                                <td colspan="1" style="text-align:center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-layout-item>
+            <lightning-layout-item size="6">
+                <div class="slds-m-horizontal_x-small">
+
+                    <table style="width: 100%;color: black;border-radius: 0px;"
+                        class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right slds-table_col-bordered custom-table">
+                        <thead>
+                            <tr>
+                                <th class="" colspan={totalcolspan} scope="col"
+                                    style="background-color: #49f39b; color: #000000;width: 1%;font-size: 12px;">
+                                    <label class="slds-align_absolute-center"  style="font-size: 12px;"><strong>Rating for
+                                            Scoring</strong></label>
+                                </th>
+                            </tr>
+                            <tr style="height: 2rem">
+                                <template for:each={headerData} for:index="index" for:item="item">
+                                    <th key={item.label} class="" scope="col"
+                                        style="font-size: 11px;background-color: #eaeaea; color: #000000;width: 4% !important;text-align:center">
+                                        <strong>{item.label}</strong>
+                                    </th>
+                                </template>
+                                <th style="font-size: 11px;background-color: #eaeaea; color: #000000;width: 10% !important;">
+                                    <strong>Remarks</strong>
+                                </th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+
+
+                            <template for:each={ansData} for:item="row" for:index="index">
+                                <!-- Ensure row.answers is an array before attempting to iterate -->
+                                <tr key={row.Assessment_Master} style="height: 5rem;vertical-align:top">
+                                    <template if:true={row.answers}>
+                                        <template for:each={row.answers} for:item="item" for:index="index">
+                                            <!-- Check if item.ans length is greater than 20 -->
+                                            
+                                                <td key={item.score} style="padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                                    {item.ansSub}
+                                                    <lightning-helptext if:true={item.ansShow} content={item.ans}></lightning-helptext>
+                                                </td>
+                                        </template>
+                                    </template>
+                                    <td style="padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                        {row.remarks}
+                                        <lightning-helptext if:true={row.remarksShow}  content={row.remarks}></lightning-helptext>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-layout-item>
+
+            <lightning-layout-item size="12" class="slds-m-top_small" if:true={openDecisionCriteria}>
+                <div class="slds-m-horizontal_x-small">
+                    <table style="width: 100%; font-size: 12px;color: black;border-radius: 0px;"
+                        class="slds-table  tableCls_customer_ledger slds-table_bordered slds-border_left slds-border_right slds-table_col-bordered custom-table">
+                        <thead>
+                            <tr>
+                                <th class="" colspan="5" scope="col"
+                                    style="background-color: #49f39b; color: #000000;width: 1%;font-size: 12px;">
+                                    <label class="slds-align_absolute-center"><strong>DECISION CRITERIA</strong></label>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th class="" scope="col" style="font-size: 12px;background-color: #eaeaea; color: #000000;width: 2%;">
+                                    <strong>Sr. No</strong>
+                                </th>
+                                <th class="" scope="col" style="font-size: 12px;background-color: #eaeaea; color: #000000;width: 25%;">
+                                    <strong>Stage 2 Go / Kill / Defer Decision Criteria -<br /> Qualitative
+                                        Assessment</strong>
+                                </th>
+                                <!-- <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;width: 14%">
+                                    <strong>Go / Kill / Defer<br />
+                                        Decision Rating</strong>
+                                </th> -->
+                                <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;width: 14%">
+                                    <strong>Decision</strong>
+                                </th>
+                                <th class="" scope="col" style="font-size: 12px;background-color:#eaeaea; color: #000000;">
+                                    <strong>Decision making - Notes for each criteria and suggested action item</strong>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={decisionData} for:index="index" for:item="item">
+                                <tr key={item.Id} style="vertical-align:top">
+                                    <td style="text-align:center;padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                        {item.Name}
+
+                                    </td>
+                                    <td style="padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                        {item.Question__c}
+
+                                    </td>
+                                    
+                                    <td style="font-size: 11px;">
+                                        <lightning-combobox options={option} value={item.decision} data-id={item.Id} onchange={handleOnchangeValue} data-name={item.Question__c}  disabled={item.isDisbaled}  data-parent="Name" data-label="decision" variant="label-hidden"></lightning-combobox>
+                                    </td>
+                                    <td> 
+                                        <lightning-textarea variant="label-hidden" value={item.notes} data-name={item.notes} label="Enter Long Text" data-id={item.Id} disabled={item.isDisbaled} onchange={handleOnNoteschangeValue} data-label="notes" placeholder="Type your text here..." rows="10" cols="50"></lightning-textarea>
+                                    </td>
+                                </tr>
+                            </template>
+                            <!-- <tr style="vertical-align:top">
+                                <td style="text-align:center;padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                    1.25
+                                </td>
+                                <td colspan="1" style="font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                    <strong>Overall Decision for Gate 3</strong>
+                                </td>
+                                <td style="font-size: 11px;">
+                                    <lightning-combobox options={option}  onchange={handleOnDecesionchangeValue}  data-parent="Name" data-label="decision" variant="label-hidden"></lightning-combobox>
+                                </td>
+                                <td style="text-align:center;padding:1px;font-size: 11px;white-space: normal !important; word-break: break-word !important;">
+                                </td>
+                                </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </lightning-layout-item>
+
+            
+            
+
+        </lightning-layout>
+
+        <div class="slds-m-top_large" style="margin-left:45%;display: flex;flex-direction:column">
+        
+        <!-- Left Column: ComboBox + Buttons -->
+        <div class="slds-p-around_medium" style="display: flex;">
+            
+            <template if:true={isBUHead}>
+                <lightning-combobox
+                    name="options"
+                    label="Approval Status"
+                    value={selectedValue}
+                    
+                    placeholder="Select an option"
+                    options={approveroptions}
+                    onchange={handleChange}>
+                </lightning-combobox>
+
+                <div class="slds-p-left_medium">
+                    <template if:true={showReason}>
+                        <lightning-textarea
+                            label="Rejected Reason"
+                            name="feedback"
+                            onchange={handleRejectedChange}
+                            placeholder="Enter your feedback here"
+                            maxlength="1000"
+                            class="slds-m-bottom_medium"
+                            style="min-width: 500px;">
+                        </lightning-textarea>
+                    </template>
+                </div>
+            </template>
+        </div>
+
+            <div class="slds-m-top_small" style="display: flex;">
+                <button type="button" class="slds-button slds-button_neutral" onclick={handleCancel}>Cancel</button>
+                <button type="button" class="slds-button slds-button_brand slds-m-left_small" onclick={handleSave}>Save</button>
+            </div>
+        
+
+        <!-- Right Column: Text Area -->
+        
+    </div>  
+    </lightning-card>
+    <template if:true={OpenFileUpload}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container" style="width:30%">
+                <!-- Modal/Popup header -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" onclick={closeModal} title="Close">
+                        <lightning-icon icon-name="utility:close" alternative-text="close" size="small"></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                
+
+              
+                    <lightning-file-upload
+        
+        variant="label-hidden"
+        name="fileUploader"
+        accept={acceptedFormats}
+        record-id={currentAssessmentId}
+        onuploadfinished={handleUploadFinished}
+        multiple
+    >
+    </lightning-file-upload>
+               </header>
+                <footer class="slds-modal__footer" >
+                    <lightning-button variant="neutral" class="slds-align_absolute-center" label="Cancel" onclick={closeModal}></lightning-button>
+                </footer>
+            </div>
+        </section>
+
+        <!-- Backdrop to dim the background -->
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+
+
+<!-- Modal Background -->
+<template if:true={isOpenFileView}>
+    <div class="slds-backdrop slds-backdrop_open" onclick={handleOkay}></div>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <!-- Modal Header -->
+            <header class="slds-modal__header">
+                <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"  style="background:black" title="Close" onclick={handleOkay}>
+                    <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="x-small"></lightning-icon>
+                    <span class="slds-assistive-text">Close</span>
+                </button>
+                <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">View Files</h2>
+            </header>
+
+            <!-- Modal Body -->
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_striped" style="width:100%;text-align:center;">
+                    <thead>
+                        <tr class="slds-line-height_reset">
+                            <th class="slds-text-color_inverse" scope="col" style="width: 80%;background-color: #642156;color:white">File Name</th>
+                            <th class="slds-text-color_inverse" scope="col" style="background-color: #642156;color:white">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={fileViewdata} for:item="file">
+                            <tr key={file.Id}>
+                                <td>{file.Name}</td>
+                                <td>
+                                    <div style="display:flex">
+                                        <lightning-icon icon-name="action:preview" size="x-small" data-id={file.Id} onclick={viewFile}></lightning-icon>
+                                        <lightning-icon icon-name="action:delete" class="slds-m-left_xx-small" size="x-small" data-id={file.Id} onclick={deleteFile}></lightning-icon>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <footer class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" onclick={handleOkay} title="Cancel">Cancel</button>
+            </footer>
+        </div>
+    </section>
+</template>
+</template>

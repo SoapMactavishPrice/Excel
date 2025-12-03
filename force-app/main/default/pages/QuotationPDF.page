@@ -1,0 +1,68 @@
+<apex:page renderAs="pdf" controller="QuotationPDFController" applyHtmlTag="false" applyBodyTag="false" showHeader="false" docType="html-5.0">
+    <div class="header">
+                <table style=" width:100%; border:none; border-collapse: collapse; ">
+                    <tr>
+                    <!--    <td style="padding:5px 5px;font-size:20px;border-collapse: collapse;width:50%;text-align:left">
+                             <p><u>Excel Industries Ltd</u></p>
+                        </td> --> 
+                        <td style="padding:5px 5px;font-size:12px;text-align:center;border-collapse: collapse;">
+                            <img style="width:100px;height:100px" alt="logo" src="{!$Resource.Excel_Image}"/>
+                        </td>
+                         
+                    </tr>
+                </table>
+            </div>
+    
+    <h1 style="text-align: center; font-size: 18px; color: #555;">Quotation for {!currentMonthYear}</h1>
+    
+    <div style="margin-top: 20px;">
+        <p>Dear Sir/Madam,</p>
+        
+        <p>In spite of increasing raw material freight charges, to compete with the imports and the local competition, we have decided to maintain the same prices as August 2024 for Phosphonates series products &amp; Biocel Series Products so that we can retain the market share during this period.</p>
+        
+        <p>Our prices for the month of January 2025 are as follows:</p>
+        
+        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f4f4f4; font-weight: bold;">Sr.No.</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f4f4f4; font-weight: bold;">Product Name</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f4f4f4; font-weight: bold;">Sales Price</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f4f4f4; font-weight: bold;">Quantity</th>
+                    <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f4f4f4; font-weight: bold;">Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                 <apex:variable var="rows" value="{!0}"/>
+                    <apex:repeat value="{!quoteRecord.lineItems}" var="lineItem">
+                    <tr style="margin-bottom:100px;font-size:12px; ">
+                        <apex:variable var="rows" value="{!rows+1}"/>
+                        <td style="border-left:None; text-align:center;border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">{!rows}</td>
+                        <td style="text-align: center;border: 1px solid #ddd; padding: 8px; text-align: left; font-weight: bold;">{!lineItem.Goodsservices}</td>
+                        <td style="text-align: center;border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">{!lineItem.UnitPrice}</td>
+                        <td style="text-align: center;border: 1px solid #ddd; padding: 8px; text-align: center; font-weight: bold;">{!lineItem.Quantity}</td>
+                        <td style="text-align: center;border: 1px solid #ddd; padding: 8px; text-align: right; font-weight: bold;">{!lineItem.Totalvalue}</td>
+                    </tr> 
+                </apex:repeat>
+            </tbody>
+        </table>
+
+        <p>Special prices for key accounts can be decided on a case-to-case basis.</p>
+        <p>Please note above prices are Ex -Bhiwandi. Prices can be changed as per the market conditions. Price offer is for supply till 12th January 2025.</p>
+        <p>The above prices are for packed material in 65 Kgs carboys/250 Kgs drums/25 Kgs bags/50 Kgs drums.</p>
+        <p>No dealer discount on any of the above products.</p>
+        <p>Payment terms: 15 days from the date of invoice.</p>
+        <p>Please note the Ex-works price will be Rs.1.25/kg less than the above price.</p>
+        <p>Material dispatch will be done as per the availability of raw materials.</p>
+        <p>Management reserves the right to change the prices during the offer validity because of market dynamics.</p>
+        <p><strong>P.S.- On account of Ganpati Festival, 4th Sept evening onwards heavy vehicle movements are restricted on NH-66.</strong></p>
+        <p>Regards,</p>
+        <p>{!userName}<br />
+        {!userTitle}<br />
+        Excel Industries Ltd<br />
+        184-87, S.V. Road, Next to 24Carat Multiplex<br />
+        Jogeshwari (W), Mumbai - 400102<br />
+        Mob: {!userMobile}</p>
+    </div>
+</apex:page>

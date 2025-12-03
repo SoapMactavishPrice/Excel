@@ -1,0 +1,564 @@
+<template>
+	<div if:true={showSpinner} class="exampleHolder">
+		<lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+	</div>
+	<template if:true={syncDataResponseFlag}>
+		<div>
+			<div class="showerror slds-p-around_medium" style="font-weight: 500;">
+				<div if:true={ResponseMessage} style="display: flex;align-items: center;">
+					<svg style="height: 50px;width: 40px;margin-right: 10px;" class="slds-icon slds-icon_x-small"
+						focusable="false" data-key="check" aria-hidden="true" height="40px" width="40px" version="1.1"
+						xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" xml:space="preserve">
+						<circle style="fill:#17a717;" cx="256" cy="256" r="256" />
+						<polygon style="fill:#fff;" points="230.288,365.04 137.456,292.528 157.152,267.312 223.04,318.768 329.984,161.28 
+            356.448,179.248 " />
+					</svg>
+					{ResponseMessage}
+				</div>
+				<div if:true={errorResponseMessage} style="display: flex;align-items: center;">
+					<svg style="height: 50px;width: 40px;margin-right: 10px;" width="40px" height="40px"
+						viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+						<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"
+							sketch:type="MSPage">
+							<g id="Icon-Set-Filled" sketch:type="MSLayerGroup"
+								transform="translate(-570.000000, -1089.000000)" fill="red">
+								<path
+									d="M591.657,1109.24 C592.048,1109.63 592.048,1110.27 591.657,1110.66 C591.267,1111.05 590.633,1111.05 590.242,1110.66 L586.006,1106.42 L581.74,1110.69 C581.346,1111.08 580.708,1111.08 580.314,1110.69 C579.921,1110.29 579.921,1109.65 580.314,1109.26 L584.58,1104.99 L580.344,1100.76 C579.953,1100.37 579.953,1099.73 580.344,1099.34 C580.733,1098.95 581.367,1098.95 581.758,1099.34 L585.994,1103.58 L590.292,1099.28 C590.686,1098.89 591.323,1098.89 591.717,1099.28 C592.11,1099.68 592.11,1100.31 591.717,1100.71 L587.42,1105.01 L591.657,1109.24 L591.657,1109.24 Z M586,1089 C577.163,1089 570,1096.16 570,1105 C570,1113.84 577.163,1121 586,1121 C594.837,1121 602,1113.84 602,1105 C602,1096.16 594.837,1089 586,1089 L586,1089 Z"
+									id="cross-circle" sketch:type="MSShapeGroup">
+								</path>
+							</g>
+						</g>
+					</svg>
+					{errorResponseMessage}
+				</div>
+
+			</div>
+		</div>
+	</template>
+
+	<template if:false={syncDataResponseFlag}>
+		<div class="modal-container">
+			<!-- Header -->
+			<div class="modal-header">
+				<h2>Update Sales Order Details</h2>
+				<div class="header-divider"></div>
+			</div>
+
+			<!-- Scrollable Content -->
+			<div class="modal-body">
+				<lightning-record-edit-form object-api-name="Order" record-id={recordId} onsubmit={handleMainSubmit}
+					onsuccess={handleMainSuccess} onerror={handleNewError} data-id="mainform">
+					<lightning-messages></lightning-messages>
+					<lightning-layout multiple-rows>
+
+						<lightning-layout-item size="12" padding="around-small" style="padding: 0 0 5px 0;">
+							<div class="subheaddiv">Order Information</div>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Order Number</label>
+							<lightning-input-field field-name="Name" variant="label-hidden"
+								disabled></lightning-input-field>
+							<lightning-input-field field-name="CurrencyIsoCode" variant="label-hidden"
+								data-name="currencyfield" style="display: none;" disabled></lightning-input-field>
+							<lightning-input-field field-name="AccountId" variant="label-hidden" data-name="accountdata"
+								style="display: none;" disabled></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">
+								<span style="color: red;">* </span>Operating Unit</label>
+							<lightning-input-field field-name="Operating_Unit__c" variant="label-hidden"
+								onchange={handleInputChange} data-name="operatingunit" required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Warehouse</label>
+							<lightning-input-field data-name="warehouselookup" field-name="Warehouse__c"
+								variant="label-hidden" style="display: none;">
+							</lightning-input-field>
+							<lightning-combobox name="warehouse" variant="label-hidden" options={warehouseOptions}
+								placeholder="Select Warehouse" onchange={handleInputChange} value={warehouseValue}
+								data-name="warehouse"></lightning-combobox>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Payment Term
+								Id</label>
+							<lightning-input-field field-name="Payment_Term__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Order Type
+								Id</label>
+							<lightning-input-field field-name="Order_Type__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Price
+								List</label>
+							<lightning-input-field data-name="pricelistField" style="display: none;"
+								field-name="Price_List__c" variant="label-hidden"></lightning-input-field>
+							<!-- <label>Shipment Code</label> -->
+							<lightning-combobox name="pricelist" variant="label-hidden" options={priceListOptions}
+								placeholder="Select Price List" value={priceListValue} onchange={handleInputChange}
+								data-name="pricelist" required>
+							</lightning-combobox>
+						</lightning-layout-item>
+
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">CurrencyIsoCode</label>
+							<lightning-input-field field-name="CurrencyIsoCode"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Customer Po
+								Number</label>
+							<lightning-input-field field-name="PoNumber" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Po Received
+								Date</label>
+							<lightning-input-field field-name="Po_Received_Date__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0" style="display: none;">
+							<label class="slds-form-element__label">Account</label>
+							<lightning-input-field field-name="AccountId" variant="label-hidden"
+								disabled></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Requested
+								Delivery Date</label>
+							<lightning-input-field field-name="Requested_Delivery_Date__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Promised Delivery
+								Date</label>
+							<lightning-input-field field-name="Promised_Delivery_Date__c" variant="label-hidden"
+								required></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">External Document No</label>
+							<lightning-input-field field-name="External_Document_No__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Dispatcher Information</label>
+							<lightning-input-field field-name="Dispatcher_Information__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="12" padding="around-small" style="padding: 0 0 5px 0;">
+							<div class="subheaddiv">Address Information</div>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="8" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Bill to
+								Party</label>
+							<lightning-input-field field-name="Bill_to_Party__c" variant="label-hidden"
+								data-name="billtolookup" style="display: none;" required></lightning-input-field>
+							<lightning-combobox name="billto" variant="label-hidden" options={billtoOptions}
+								placeholder="Select Bill To" onchange={handleInputChange} value={billtoValue}
+								data-name="billtodata"></lightning-combobox>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Bill To Name</label>
+							<lightning-input-field field-name="Bill_To_Name__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Bill To Contact</label>
+							<lightning-input-field field-name="Bill_To_Contact__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0"></lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0"></lightning-layout-item>
+						<lightning-layout-item size="8" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Ship to
+								Party</label>
+							<lightning-input-field field-name="Ship_to_Party__c" variant="label-hidden"
+								data-name="shiptolookup" style="display: none;" required></lightning-input-field>
+							<lightning-combobox name="shipto" variant="label-hidden" options={shiptoOptions}
+								placeholder="Select Ship To" onchange={handleInputChange} value={shiptoValue}
+								data-name="shiptodata"></lightning-combobox>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Ship To Name</label>
+							<lightning-input-field field-name="Ship_To_Name__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Ship To Contact</label>
+							<lightning-input-field field-name="Ship_To_Contact__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Ship To GST Reg No</label>
+							<lightning-input-field field-name="Ship_To_GST_Reg_No__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Sell To Contact</label>
+							<lightning-input-field field-name="Sell_To_Contact__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Sell To Email</label>
+							<lightning-input-field field-name="Sell_To_Email__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Sell To Phone No</label>
+							<lightning-input-field field-name="Sell_To_Phone_No__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Payment Term Code</label>
+							<lightning-input-field field-name="Payment_Term_Code__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+
+						<!-- <lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Short Closed</label>
+							<lightning-input-field field-name="Short_Closed__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item> -->
+
+						<!-- <lightning-layout-item size="12"
+							style="padding: 5px 0 5px 15px; display: flex; justify-content: space-between;">
+							<div style="font-size: large; font-weight: 500;">
+								Order Line Item
+							</div>
+							<div style="padding: 5px 0 5px 0;">
+								<lightning-button label="Add Bill To" data-name="Bill_To" variant="neutral" slot="actions"
+									icon-name="utility:add" onclick={handleInsertAddInfo} class="slds-m-right_small">
+								</lightning-button>
+								<lightning-button label="Add Ship To" data-name="Ship_To" variant="neutral" slot="actions"
+									icon-name="utility:add" onclick={handleInsertAddInfo} class="slds-m-right_small">
+								</lightning-button>
+							</div>
+						</lightning-layout-item> -->
+
+						<lightning-layout-item size="12" padding="around-small" style="padding: 0 0 5px 0;">
+							<div class="subheaddiv">Additional Information</div>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">FOB Points</label>
+							<lightning-input-field field-name="FOB_Terms__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">SecondTransporter</label>
+							<lightning-input-field field-name="Second_Transporter__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Delivery</label>
+							<lightning-input-field field-name="Delivery__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Payment_Mode</label>
+							<lightning-input-field field-name="Payment_Mode__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label"><span style="color: red;">* </span>Business
+								Unit</label>
+							<lightning-input-field field-name="Business_Unit__c" variant="label-hidden" required>
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">InstructionSite</label>
+							<lightning-input-field field-name="Instruction_to_Site__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">JwExInvNo</label>
+							<lightning-input-field field-name="JwExInvNo__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">JwAnnexNo</label>
+							<lightning-input-field field-name="JwAnnexNo__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">JwRemarks</label>
+							<lightning-input-field field-name="JwRemarks__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">GoodsDesc</label>
+							<lightning-input-field field-name="GoodsDesc__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">GrnNumber</label>
+							<lightning-input-field field-name="GrnNumber__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">DeliveryChallanNo</label>
+							<lightning-input-field field-name="DeliveryChallanNo__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">LotNumber</label>
+							<lightning-input-field field-name="LotNumber__c" variant="label-hidden">
+							</lightning-input-field>
+						</lightning-layout-item>
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Description</label>
+							<lightning-input-field field-name="Description"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+						<!-- <lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Comment</label>
+							<lightning-input-field field-name="Comment__c" variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item> -->
+
+
+						<lightning-layout-item size="4" padding="around-small" class="pt0">
+							<label class="slds-form-element__label">Your Reference</label>
+							<lightning-input-field field-name="Your_Reference__c"
+								variant="label-hidden"></lightning-input-field>
+						</lightning-layout-item>
+
+						<lightning-layout-item size="12" padding="around-small" style="padding: 0 0 10px 0;">
+							<div class="subheaddiv">Order Product Information</div>
+						</lightning-layout-item>
+						<lightning-layout-item size="12" padding="around-small" style="padding-top: 0px !important;">
+							<table class="slds-table slds-table_cell-buffer slds-table_bordered"
+								style="table-layout: fixed;">
+								<thead>
+									<tr class="slds-line-height_reset">
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Product Name</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Quantity</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Unit Price</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Unit Selling Price</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Pricing Quantity</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Warehouse</div>
+										</th>
+										<th class="" scope="col" style="background-color: #066afe; color: #fff;">
+											<div class="slds-truncate" title="Name">Action</div>
+										</th>
+									</tr>
+								</thead>
+								<tbody>
+									<template if:true={orderLineItemList} for:each={orderLineItemList} for:item="ail"
+										for:index="Index">
+										<tr key={ail.Id}>
+											<th scope="col">
+												<div class="slds-truncate" title="Product Name"
+													style="white-space: break-spaces;">
+													{ail.Product2.Name}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Product Name"
+													style="white-space: break-spaces;">
+													{ail.Quantity}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Product Name"
+													style="white-space: break-spaces;">
+													{ail.UnitPrice}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Product Name"
+													style="white-space: break-spaces;">
+													{ail.UnitPrice}</div>
+											</th>
+											<th scope="col">
+												<div class="slds-truncate" title="Product Name"
+													style="white-space: break-spaces;">
+													{ail.Quantity}</div>
+											</th>
+											<th scope="col">
+												<template if:true={ail.Product2.Organization_Name__c}>
+													<div class="slds-truncate" title="Product Name"
+														style="white-space: break-spaces;">
+														{ail.Product2.Organization_Name__r.Organization_Id__c}
+													</div>
+												</template>
+												<template if:false={ail.Product2.Organization_Name__c}>
+													<div class="slds-truncate" title="Product Name"
+														style="white-space: break-spaces;"></div>
+												</template>
+											</th>
+											<th style="width: 5%; padding-top: 10px;">
+												<lightning-icon icon-name="action:edit" data-index={Index}
+													alternative-text="Success!" variant="success" title="Edit Row"
+													onclick={handleEditRow} style="margin-right: 10px;"
+													size="x-small"></lightning-icon>
+											</th>
+										</tr>
+									</template>
+								</tbody>
+							</table>
+						</lightning-layout-item>
+
+					</lightning-layout>
+				</lightning-record-edit-form>
+			</div>
+			<div class="modal-footer">
+				<lightning-button variant="brand" label="Save" onclick={handleMainSubmit}></lightning-button>
+				<lightning-button label="Cancel" variant="neutral" class="slds-m-left_small"
+					onclick={closeModal}></lightning-button>
+			</div>
+		</div>
+	</template>
+
+	<template if:true={showOrderLineItemModal}>
+		<section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+			<div class="slds-modal__container" style="max-width: 100rem !important;width: 100% !important;">
+				<header class="slds-modal__header">
+					<button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"
+						title="Close" onclick={handleCloseOrderLineItemModal}>
+						<lightning-icon icon-name="utility:close" alternative-text="close"
+							size="small"></lightning-icon>
+						<span class="slds-assistive-text">Close</span>
+					</button>
+					<h2 class="slds-text-heading_medium">Edit Line Item</h2>
+				</header>
+				<div class="slds-modal__content slds-p-around_medium">
+					<lightning-record-edit-form object-api-name="OrderItem" record-id={orderLineItemId} data-id="form1"
+						onsuccess={handleLineItemOnSuccess} onsubmit={handleLineItemOnSubmit} onerror={handleOnError}>
+						<lightning-layout multiple-rows>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Line
+									Number</label>
+								<lightning-input-field field-name="Line_No__c" variant="label-hidden"
+									value={lineNumberValue} required></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">*
+									</span>Quantity</label>
+								<lightning-input-field field-name="Quantity" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Quantity 2</label>
+								<lightning-input-field field-name="Quantity_2__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Product</label>
+								<lightning-input-field field-name="Product2Id" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Unit
+									Price</label>
+								<lightning-input-field field-name="UnitPrice" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Unit Selling
+									Price</label>
+								<lightning-input-field field-name="Unit_Selling_Price__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item> -->
+
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Pricing
+									Quantity</label>
+								<lightning-input-field field-name="Pricing_Quantity__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Primary Unit of Measurment</label>
+								<lightning-input-field field-name="Unit_of_Measure_Code__c"
+									variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Secondary Unit of Measurment</label>
+								<lightning-input-field field-name="Secondary_Unit_of_Measure_Code__c"
+									variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Requested
+									Delivery Date</label>
+								<lightning-input-field field-name="Requested_Delivery_Date__c"
+									variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Promised
+									Delivery Date</label>
+								<lightning-input-field field-name="Promised_Delivery_Date__c"
+									variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Type</label>
+								<lightning-input-field field-name="Type__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Order</label>
+								<lightning-input-field field-name="OrderId" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Discount</label>
+								<lightning-input-field field-name="Discount__c"
+									variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+
+							<!-- <lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">FOC</label>
+								<lightning-input-field field-name="FOC__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label"><span style="color: red;">* </span>Product
+									Type</label>
+								<lightning-input-field field-name="Product_Type__c" variant="label-hidden"
+									required></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Remarks</label>
+								<lightning-input-field field-name="Remarks__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Comment</label>
+								<lightning-input-field field-name="Comment__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item>
+							<lightning-layout-item size="4" padding="around-small" style="padding-top: 0px !important;">
+								<label class="slds-form-element__label">Short Closed</label>
+								<lightning-input-field field-name="Short_Closed__c" variant="label-hidden"></lightning-input-field>
+							</lightning-layout-item> -->
+
+						</lightning-layout>
+					</lightning-record-edit-form>
+				</div>
+				<footer class="slds-modal__footer">
+					<lightning-button variant="brand" label="Save"
+						onclick={handleLineItemOnSubmit}></lightning-button>&nbsp;
+					<lightning-button variant="neutral" label="Close"
+						onclick={handleCloseOrderLineItemModal}></lightning-button>
+				</footer>
+			</div>
+		</section>
+		<div class="slds-backdrop slds-backdrop_open"></div>
+	</template>
+
+	<template if:true={showDispatchSchModal}>
+		<c-create-dispatch-info product-quantity={productQuantity} order-id={orderId} order-line-id={orderLineId}
+			product-id={productId} onsavecompleted={handleAfterDispatchInfoSave}>
+		</c-create-dispatch-info>
+	</template>
+
+</template>

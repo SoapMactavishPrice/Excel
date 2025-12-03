@@ -1,0 +1,147 @@
+<template>
+	<lightning-card class="slds-m-around_medium">
+		<!-- Centered Header Section -->
+		<div class="slds-text-align_center slds-p-around_medium header-container" style="margin-top: -35px;">
+			<h2 class="slds-text-heading_medium header-title">Create New Order</h2>
+			<div class="header-divider slds-m-top_small"></div>
+		</div>
+
+		<template if:true={showSpinner}>
+			<lightning-spinner alternative-text="Loading" size="large"></lightning-spinner>
+		</template>
+
+		<lightning-layout>
+			<lightning-layout-item size="3" class="slds-p-around_medium">
+				<lightning-combobox name="ordertype" label="Order Type" value={orderTypeValue} placeholder="Select Order Type"
+					options={orderTypeOptions} onchange={handleOrderTypeChange}>
+				</lightning-combobox>
+			</lightning-layout-item>
+			<template if:true={orderTypeFlag}>
+				<lightning-layout-item size="3" class="slds-p-around_medium">
+					<c-look-up-component object-api-name="Order" icon-name="standard:order" data-label="orderId"
+						onrecordselection={lookupOrderRecord} onfocus={lookupOrderRecord} lookup-label="Select Order">
+					</c-look-up-component>
+				</lightning-layout-item>
+			</template>
+		</lightning-layout>
+
+		<div class="slds-p-around_medium">
+			<div class="slds-grid slds-wrap">
+				<!-- First Row -->
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-input label="Account Name" value={accountName} disabled></lightning-input>
+				</div>
+
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-input type="text" label="Customer PO Number" value={poNumber}
+						onchange={handlePoNumberChange}></lightning-input>
+				</div>
+
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-input type="date" label="PO Received Date" value={poReceivedDate}
+						onchange={handlePoReceivedDateChange}></lightning-input>
+				</div>
+
+				<!-- Second Row -->
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-input type="date" label="Order Start Date" value={effectiveDate}
+						onchange={handleEffectiveDateChange}></lightning-input>
+				</div>
+
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-combobox label="Status" value={status} options={statusOptions} onchange={handleStatusChange}
+						disabled="true"></lightning-combobox>
+				</div>
+
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-combobox label="Currency" value={currency} options={currencyOptions}
+						onchange={handleCurrencyChange}></lightning-combobox>
+				</div>
+
+				<!-- Third Row -->
+				<div class="slds-col slds-size_1-of-4 slds-p-around_x-small">
+					<lightning-record-edit-form object-api-name="Order">
+						<lightning-input-field field-name="Intended_User__c" value={intendedUserId}
+							onchange={handleIntendedUserChange}>
+						</lightning-input-field>
+					</lightning-record-edit-form>
+				</div>
+			</div>
+
+			<div class="slds-m-top_large">
+				<div class="slds-table slds-table_bordered slds-table_cell-buffer">
+					<table class="slds-table slds-table_bordered slds-table_cell-buffer">
+						<thead>
+							<tr class="slds-line-height_reset">
+								<th class="slds-text-align_center">Product Name</th>
+								<th class="slds-text-align_center">Product Code</th>
+								<th class="slds-text-align_center">Quantity</th>
+								<th class="slds-text-align_center">Unit Price</th>
+								<!-- <th class="slds-text-align_center">Action</th> -->
+							</tr>
+						</thead>
+						<tbody>
+							<template for:each={orderProducts} for:item="product" for:index="index">
+								<tr key={product.key} class="slds-hint-parent">
+									<td>
+										<template lwc:if={product.pbeId}>
+											<c-look-up-component object-api-name="PricebookEntry" icon-name="standard:product"
+												data-index={index} data-label="prodId" default-record-id={product.pbeId}
+												family={product.prodFamily} currency-code={currency} onrecordselection={lookupRecord}
+												onfocus={lookupRecord} disabled={product.disabled}>
+											</c-look-up-component>
+										</template>
+
+										<template lwc:else>
+											<c-look-up-component object-api-name="PricebookEntry" icon-name="standard:product"
+												data-index={index} data-label="prodId" family={product.prodFamily} currency-code={currency}
+												onrecordselection={lookupRecord} onfocus={lookupRecord}>
+											</c-look-up-component>
+										</template>
+									</td>
+									<td style="padding-top: 30px;">
+										<lightning-input value={product.productCode} data-index={index} variant="label-hidden" disabled>
+										</lightning-input>
+									</td>
+
+
+									<td style="padding-top: 30px;">
+										<lightning-input type="number" value={product.quantity} variant="label-hidden" data-index={index}
+											onchange={handleQuantityChange}>
+										</lightning-input>
+									</td>
+
+									<td style="padding-top: 30px;">
+										<!-- <lightning-input type="number" value={product.unitPrice} variant="label-hidden" formatter="currency"
+											data-index={index} onchange={handlePriceChange}>
+										</lightning-input> -->
+										<lightning-input type="number" variant="label-hidden" value={product.unitPrice} step="0.01"
+											data-index={index} onchange={handlePriceChange}>
+										</lightning-input>
+									</td>
+
+									<!-- <td class="slds-text-align_center">
+										<lightning-button-icon icon-name="utility:add" alternative-text="Add"
+											onclick={handleAddItem} class="slds-m-right_x-small">
+										</lightning-button-icon>
+
+										<lightning-button-icon icon-name="utility:delete" alternative-text="Delete"
+											onclick={handleRemoveItem} data-index={index}>
+										</lightning-button-icon>
+									</td> -->
+								</tr>
+							</template>
+						</tbody>
+					</table>
+				</div>
+			</div>
+
+			<!-- Action Buttons -->
+			<div class="slds-m-top_large slds-text-align_center">
+				<lightning-button label="Cancel" onclick={handleCancel}></lightning-button>
+				<lightning-button label="Create Order" variant="brand" onclick={handleSave}
+					class="slds-m-left_small"></lightning-button>
+			</div>
+		</div>
+	</lightning-card>
+</template>
